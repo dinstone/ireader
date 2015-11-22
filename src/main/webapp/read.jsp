@@ -3,14 +3,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="${contextPath}/fmt.css" type="text/css">
 <title>${article.name}${part.name}</title>
 </head>
 <body>
-	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 	<table width="900px" align="center" cellpadding="0" cellspacing="0">
 		<tbody>
 			<tr>
@@ -29,8 +30,8 @@
 		<tr>
 			<td>${article.name}</td>
 			<td>作者:${article.auth}</td>
-			<td>分类:${article.category}</td>
-			<td>第${pagenation.current}节</td>
+			<td>分类:${article.category.name}</td>
+			<td>第${pagenation.current}/${pagenation.total}节</td>
 			<td><a href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>
 		</tr>
 		<tr>
@@ -45,7 +46,8 @@
 			<c:if test="${empty pagenation.prev}">
 				<td></td>
 			</c:if>
-			<td>第${pagenation.current}/${pagenation.total}节</td>
+			<td><a
+				href="${contextPath}/view/article/directory/${article.id}">［目录］</a></td>
 			<c:if test="${!empty pagenation.next}">
 				<td><a
 					href="${contextPath}/view/article/read/${article.id}-${pagenation.next}">［下一节］</a></td>

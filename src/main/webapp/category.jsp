@@ -3,14 +3,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>${category.name}文章列表</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="${contextPath}/fmt.css" type="text/css">
+<title>${category.name} 文章列表</title>
 </head>
 <body>
-	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 	<table width="900px" align="center" cellpadding="0" cellspacing="0">
 		<tbody>
 			<tr>
@@ -29,9 +30,9 @@
 		<c:forEach items="${articles}" var="article">
 			<tr>
 				<td><a
-					href="${contextPath}/view/article/directory/${article.id}-1">${article.name}</a></td>
+					href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
 				<td>${article.auth}</td>
-				<td>${article.category}</td>
+				<td>${article.category.name}</td>
 				<td>${article.status}</td>
 				<td><a
 					href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>

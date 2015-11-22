@@ -25,7 +25,7 @@ import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
 import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.domain.Part;
-import com.dinstone.ireader.domain.Repository;
+import com.dinstone.ireader.service.RepositoryManager;
 import com.dinstone.ireader.service.SynchronizeService;
 
 @Service
@@ -37,13 +37,13 @@ public class ArticleController {
 
     @RequestMapping(value = "/list/{pageNumber}")
     public ModelAndView list(@PathVariable int pageNumber) {
-        Category category = Repository.getInstance().topCategory;
+        Category category = RepositoryManager.getInstance().getRepository().topCategory;
         return create(category, pageNumber, "list");
     }
 
     @RequestMapping(value = "/category/{categoryId}-{pageNumber}")
     public ModelAndView category(@PathVariable String categoryId, @PathVariable int pageNumber) {
-        Map<String, Category> categorys = Repository.getInstance().categoryMap;
+        Map<String, Category> categorys = RepositoryManager.getInstance().getRepository().categoryMap;
         Category category = categorys.get(categoryId);
         if (category == null) {
             ModelAndView mav = new ModelAndView("error");
@@ -56,7 +56,7 @@ public class ArticleController {
 
     private ModelAndView create(Category category, int pageNumber, String viewName) {
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("categorys", Repository.getInstance().categorys);
+        mav.addObject("categorys", RepositoryManager.getInstance().getRepository().categorys);
         mav.addObject("category", category);
 
         if (pageNumber <= 0) {
@@ -92,7 +92,7 @@ public class ArticleController {
         }
 
         ModelAndView mav = new ModelAndView("read");
-        mav.addObject("categorys", Repository.getInstance().categorys);
+        mav.addObject("categorys", RepositoryManager.getInstance().getRepository().categorys);
         mav.addObject("article", article);
 
         if (partIndex <= 0) {
@@ -152,7 +152,7 @@ public class ArticleController {
         }
 
         ModelAndView mav = new ModelAndView("directory");
-        mav.addObject("categorys", Repository.getInstance().categorys);
+        mav.addObject("categorys", RepositoryManager.getInstance().getRepository().categorys);
         mav.addObject("article", article);
 
         return mav;

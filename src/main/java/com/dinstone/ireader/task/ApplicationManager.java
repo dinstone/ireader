@@ -9,6 +9,10 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import com.dinstone.ireader.domain.Repository;
+import com.dinstone.ireader.service.RepositoryManager;
+import com.dinstone.ireader.service.SynchronizeService;
+
 @Service
 public class ApplicationManager implements ApplicationListener<ApplicationContextEvent> {
 
@@ -16,15 +20,28 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
-        LOG.info("onApplicationEvent {}", event);
         ApplicationContext applicationContext = event.getApplicationContext();
         if (applicationContext.getParent() != null) {
             return;
         }
 
         if (event instanceof ContextRefreshedEvent) {
-            // RepositorySyncTask repositorySyncTask = applicationContext.getBean(RepositorySyncTask.class);
-            // repositorySyncTask.execute();
+            LOG.info("init repository start", event);
+            SynchronizeService service = applicationContext.getBean(SynchronizeService.class);
+            Repository repository = service.loadRepository();
+            if (repository == null) {
+                try {
+                    repository = service.createRepository();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                service.writeRepository(repository);
+            }
+
+            service.buildTopCategory(repository);
+
+            RepositoryManager.getInstance().setRepository(repository);
+            LOG.info("init repository finish");
         }
     }
 

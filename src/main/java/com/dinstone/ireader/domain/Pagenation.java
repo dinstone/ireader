@@ -1,6 +1,7 @@
 
 package com.dinstone.ireader.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,10 @@ import java.util.List;
  * @author dinstone
  * @version 1.0.0
  */
-public class Pagenation {
+public class Pagenation implements Serializable {
+
+    /**  */
+    private static final long serialVersionUID = 1L;
 
     public int index;
 

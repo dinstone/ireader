@@ -36,7 +36,7 @@ public class ArticleUpdater implements Callable<Article> {
 
     public ArticleUpdater(Article article, Configuration config) {
         this.article = article;
-        this.articleDir = new File(config.getRepositoryDir(), article.category + "/" + article.id);
+        this.articleDir = new File(config.getRepositoryDir(), article.category.id + "/" + article.id);
     }
 
     @Override
@@ -45,9 +45,8 @@ public class ArticleUpdater implements Callable<Article> {
             return article;
         }
 
+        article.proccess = true;
         try {
-            article.proccess = true;
-            article.update = new Date();
             article.parts = updateParts(article);
         } catch (Exception e) {
             LOG.error("更新文章[{}]章节失败 ", article.name);
@@ -83,6 +82,7 @@ public class ArticleUpdater implements Callable<Article> {
                 }
             }
 
+            article.update = new Date();
             LOG.info("同步文章[{}]完成: {}", article.name, articleFile);
         } catch (Exception e) {
             LOG.warn("同步文章[{}]第{}节时失败", article.name, index);
@@ -194,7 +194,18 @@ public class ArticleUpdater implements Callable<Article> {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(url).get();
+                Document doc = Jsoup.connect(url).timeout(5000).get();
+                // extract auth,category,status
+                Elements bases = doc.select("span.TA");
+                for (Element base : bases) {
+                    // 作者: 御风楼主人 　 分类: 鬼话 　 [全文完]
+                    String[] bp = base.text().trim().replaceAll("　", "").split(" +");
+                    if (bp.length >= 5) {
+                        article.auth = bp[1];
+                        article.status = bp[4];
+                    }
+                }
+
                 // extract parts
                 List<Part> parts = new LinkedList<Part>();
                 Elements links = doc.select("a[href]");

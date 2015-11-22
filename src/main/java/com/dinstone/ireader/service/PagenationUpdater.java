@@ -55,7 +55,6 @@ public class PagenationUpdater implements Callable<Pagenation> {
                     String[] bp = base.text().trim().replaceAll("　", "").split(" +");
                     if (bp.length >= 5) {
                         article.auth = bp[1];
-                        article.category = bp[3];
                         article.status = bp[4];
                     }
                 }

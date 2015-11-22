@@ -9,11 +9,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" href="${contextPath}/fmt.css" type="text/css">
-<title>排行榜文章列表</title>
+<title>排行榜 文章列表</title>
 </head>
 <body>
-	<table width="900px" align="center" cellpadding="0" cellspacing="0"
-		class="header">
+	<table width="900px" align="center" cellpadding="0" cellspacing="0">
 		<tbody>
 			<tr>
 				<td>
@@ -31,9 +30,9 @@
 		<c:forEach items="${articles}" var="article">
 			<tr class="line">
 				<td><a
-					href="${contextPath}/view/article/directory/${article.id}-1">${article.name}</a></td>
+					href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
 				<td>${article.auth}</td>
-				<td>${article.category}</td>
+				<td>${article.category.name}</td>
 				<td>${article.status}</td>
 				<td><a
 					href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>

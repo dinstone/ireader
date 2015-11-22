@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 文章
  * 
@@ -20,9 +22,10 @@ public class Article implements Serializable {
 
     public String name;
 
-    public String auth;
+    @JsonIgnore
+    public Category category;
 
-    public String category;
+    public String auth;
 
     public String status;
 
@@ -30,7 +33,7 @@ public class Article implements Serializable {
 
     public File file;
 
-    public boolean proccess;
+    public volatile boolean proccess;
 
     public volatile Date update;
 
@@ -38,12 +41,6 @@ public class Article implements Serializable {
 
     public Article() {
         super();
-    }
-
-    @Override
-    public String toString() {
-        return "Article [id=" + id + ", name=" + name + ", auth=" + auth + ", category=" + category + ", status="
-                + status + "]";
     }
 
     public String getId() {
@@ -58,7 +55,7 @@ public class Article implements Serializable {
         return auth;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
@@ -76,6 +73,12 @@ public class Article implements Serializable {
 
     public Part[] getParts() {
         return parts;
+    }
+
+    @Override
+    public String toString() {
+        return "Article [id=" + id + ", name=" + name + ", auth=" + auth + ", category=" + category + ", status="
+                + status + "]";
     }
 
 }

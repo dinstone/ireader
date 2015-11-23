@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
 import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.domain.Part;
+import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.RepositoryManager;
 import com.dinstone.ireader.service.SynchronizeService;
 
@@ -39,6 +43,24 @@ public class ArticleController {
     public ModelAndView list(@PathVariable int pageNumber) {
         Category category = RepositoryManager.getInstance().getRepository().topCategory;
         return create(category, pageNumber, "list");
+    }
+
+    @RequestMapping(value = "/query")
+    public ModelAndView list(@RequestParam String word) {
+        Repository repository = RepositoryManager.getInstance().getRepository();
+        Collection<Article> articles = repository.articleMap.values();
+
+        LinkedList<Article> result = new LinkedList<Article>();
+        for (Article article : articles) {
+            if (article.name != null && article.name.contains(word)) {
+                result.add(article);
+            }
+        }
+
+        ModelAndView mav = new ModelAndView("query");
+        mav.addObject("categorys", RepositoryManager.getInstance().getRepository().categorys);
+        mav.addObject("articles", result);
+        return mav;
     }
 
     @RequestMapping(value = "/category/{categoryId}-{pageNumber}")

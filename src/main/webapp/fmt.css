@@ -31,3 +31,10 @@ table {
 	color: #f00;
 	font-size: 14px;
 }
+
+.FL {
+	float: right;
+	Line-HEIGHT: 19px;
+	padding-bottom: 3px;
+	font-size: 14px;
+}

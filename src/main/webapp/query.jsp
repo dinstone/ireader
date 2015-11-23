@@ -9,7 +9,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" href="${contextPath}/fmt.css" type="text/css">
-<title>${article.name}${part.name}</title>
+<title>文章列表</title>
 </head>
 <body>
 	<table width="900px" align="center" cellpadding="0" cellspacing="0">
@@ -33,36 +33,17 @@
 		</tbody>
 	</table>
 	<table width="900px" align="CENTER" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>${article.name}</td>
-			<td>作者:${article.auth}</td>
-			<td>分类:${article.category.name}</td>
-			<td>第${pagenation.current}/${pagenation.total}节</td>
-			<td><a href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>
-		</tr>
-		<tr>
-			<td colspan="5"><p>${content}</p></td>
-		</tr>
-		<tr>
-			<td></td>
-			<c:if test="${!empty pagenation.prev}">
+		<c:forEach items="${articles}" var="article">
+			<tr class="line">
 				<td><a
-					href="${contextPath}/view/article/read/${article.id}-${pagenation.prev}">［上一节］</a></td>
-			</c:if>
-			<c:if test="${empty pagenation.prev}">
-				<td></td>
-			</c:if>
-			<td><a
-				href="${contextPath}/view/article/directory/${article.id}">［目录］</a></td>
-			<c:if test="${!empty pagenation.next}">
+					href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
+				<td>${article.auth}</td>
+				<td>${article.category.name}</td>
+				<td>${article.status}</td>
 				<td><a
-					href="${contextPath}/view/article/read/${article.id}-${pagenation.next}">［下一节］</a></td>
-			</c:if>
-			<c:if test="${empty pagenation.next}">
-				<td></td>
-			</c:if>
-			<td></td>
-		</tr>
+					href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>
+			</tr>
+		</c:forEach>
 	</table>
 	<table width="90%" align="center" cellpadding="3" cellspacing="0"
 		border="0">

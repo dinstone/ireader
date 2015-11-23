@@ -21,6 +21,12 @@
 							<a href="${contextPath}/view/article/category/${category.id}-1">${category.name}</a> |
 						</c:forEach>
 						<a href="${contextPath}/view/article/list/1">排行榜</a>
+						<div class="FL">
+							<form action="${contextPath}/view/article/query">
+								<input type="text" size="20" maxlength="24" name="word" value=""><input
+									type="submit" value="搜 索">
+							</form>
+						</div>
 					</div>
 				</td>
 			</tr>

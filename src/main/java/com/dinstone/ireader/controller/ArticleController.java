@@ -30,14 +30,14 @@ import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.domain.Part;
 import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.RepositoryManager;
-import com.dinstone.ireader.service.SynchronizeService;
+import com.dinstone.ireader.service.RepositoryService;
 
 @Service
 @RequestMapping(value = "/article")
 public class ArticleController {
 
     @Resource
-    private SynchronizeService synchronizeService;
+    private RepositoryService service;
 
     @RequestMapping(value = "/list/{pageNumber}")
     public ModelAndView list(@PathVariable int pageNumber) {
@@ -106,7 +106,8 @@ public class ArticleController {
 
     @RequestMapping("/read/{articleId}-{partIndex}")
     public ModelAndView read(@PathVariable String articleId, @PathVariable int partIndex) throws Exception {
-        Article article = synchronizeService.findAticle(articleId);
+        Repository repository = RepositoryManager.getInstance().getRepository();
+        Article article = service.findAticle(repository, articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("message", "文章正在更新请稍后再试.");
@@ -114,7 +115,7 @@ public class ArticleController {
         }
 
         ModelAndView mav = new ModelAndView("read");
-        mav.addObject("categorys", RepositoryManager.getInstance().getRepository().categorys);
+        mav.addObject("categorys", repository.categorys);
         mav.addObject("article", article);
 
         if (partIndex <= 0) {
@@ -166,7 +167,8 @@ public class ArticleController {
 
     @RequestMapping("/directory/{articleId}")
     public ModelAndView directory(@PathVariable String articleId) throws Exception {
-        Article article = synchronizeService.findAticle(articleId);
+        Repository repository = RepositoryManager.getInstance().getRepository();
+        Article article = service.findAticle(repository, articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("message", "文章正在更新请稍后再试.");
@@ -183,7 +185,8 @@ public class ArticleController {
     @RequestMapping("/download/{articleId}")
     public ModelAndView download(@PathVariable String articleId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        Article article = synchronizeService.findAticle(articleId);
+        Repository repository = RepositoryManager.getInstance().getRepository();
+        Article article = service.findAticle(repository, articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("message", "文章正在更新请稍后再试.");

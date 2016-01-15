@@ -3,6 +3,8 @@ package com.dinstone.ireader.domain;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -21,6 +23,8 @@ public class Category implements Comparable<Category>, Serializable {
     public String name;
 
     public String href;
+
+    public Map<String, Article> articleMap = new ConcurrentHashMap<String, Article>();
 
     public List<Pagenation> pages = new CopyOnWriteArrayList<Pagenation>();
 

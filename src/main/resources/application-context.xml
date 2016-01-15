@@ -11,6 +11,7 @@
 
 	<context:component-scan base-package="com.dinstone.ireader.service" />
 	<context:component-scan base-package="com.dinstone.ireader.task" />
+	<context:component-scan base-package="com.dinstone.ireader.facade" />
 
 	<aop:aspectj-autoproxy />
 

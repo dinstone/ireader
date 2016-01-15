@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author dinstone
  * @version 1.0.0
  */
-public class Article implements Serializable {
+public class Article implements Serializable, Comparable<Article> {
 
     /**  */
     private static final long serialVersionUID = 1L;
@@ -79,6 +79,18 @@ public class Article implements Serializable {
     public String toString() {
         return "Article [id=" + id + ", name=" + name + ", auth=" + auth + ", category=" + category + ", status="
                 + status + "]";
+    }
+
+    @Override
+    public int compareTo(Article other) {
+        if (other == null) {
+            return -1;
+        }
+
+        if (this == other) {
+            return 0;
+        }
+        return this.id.compareTo(other.id);
     }
 
 }

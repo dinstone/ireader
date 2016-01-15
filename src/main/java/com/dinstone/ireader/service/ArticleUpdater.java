@@ -45,12 +45,18 @@ public class ArticleUpdater implements Callable<Article> {
             return article;
         }
 
+        update();
+
+        return article;
+    }
+
+    public void update() {
         article.proccess = true;
         try {
             article.parts = updateParts(article);
         } catch (Exception e) {
             LOG.error("更新文章[{}]章节失败 ", article.name);
-            return article;
+            return;
         }
 
         File metaFile = new File(articleDir, article.id + ".meta");
@@ -98,7 +104,6 @@ public class ArticleUpdater implements Callable<Article> {
         writeUpdatePartIndex(index, metaFile);
 
         article.proccess = false;
-        return article;
     }
 
     private void writeUpdatePartIndex(int index, File metaFile) {

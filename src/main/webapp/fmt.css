@@ -1,14 +1,24 @@
 @CHARSET "UTF-8";
 
 body {
-	font-size: 14px;
+	font-size: 16px;
 	LINE-HEIGHT: 26px;
 	MARGIN: 0px
 }
 
 table {
-	font-size: 14px;
+	font-size: 16px;
 	LINE-HEIGHT: 26px;
+}
+
+.fillArea {
+	resize: none;
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	vertical-align: bottom;
+	font-size: 12px;
+	border: none;
 }
 
 .Header {
@@ -17,24 +27,24 @@ table {
 	PADDING: 5px;
 	Line-HEIGHT: 21px;
 	PADDING-LEFT: 15px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .header A {
 	text-decoration: None;
 	color: #FFF;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .header A:hover {
 	text-decoration: None;
 	color: #f00;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .FL {
 	float: right;
 	Line-HEIGHT: 19px;
 	padding-bottom: 3px;
-	font-size: 14px;
+	font-size: 16px;
 }

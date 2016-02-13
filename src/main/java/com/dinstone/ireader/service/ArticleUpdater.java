@@ -30,6 +30,8 @@ public class ArticleUpdater implements Callable<Article> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArticleUpdater.class);
 
+    private static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
+
     private Article article;
 
     private File articleDir;
@@ -155,7 +157,7 @@ public class ArticleUpdater implements Callable<Article> {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(part.url).get();
+                Document doc = Jsoup.connect(part.url).userAgent(userAgent).timeout(5000).get();
                 Elements divs = doc.select("div.ART");
 
                 StringBuilder builder = new StringBuilder();
@@ -199,7 +201,7 @@ public class ArticleUpdater implements Callable<Article> {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(url).timeout(5000).get();
+                Document doc = Jsoup.connect(url).userAgent(userAgent).timeout(5000).get();
                 // extract auth,category,status
                 Elements bases = doc.select("span.TA");
                 for (Element base : bases) {

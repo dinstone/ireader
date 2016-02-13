@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,15 +94,15 @@ public class RepositoryService {
 
             writeRepository(repository);
 
-            updateArticles(repository);
+            // updateArticles(repository.articleMap.values());
         } catch (Exception e) {
             LOG.warn("update repository error", e);
         }
 
     }
 
-    private void updateArticles(Repository repository) {
-        for (Article article : repository.articleMap.values()) {
+    private void updateArticles(Collection<Article> articles) {
+        for (Article article : articles) {
             asyncService.updateArticle(article);
         }
     }

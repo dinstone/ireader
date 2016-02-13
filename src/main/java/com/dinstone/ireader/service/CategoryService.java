@@ -33,6 +33,8 @@ public class CategoryService {
     @Resource
     private AsyncService asyncService;
 
+    private String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
+
     public void buildTopCategory(Repository repository) {
         long s = System.currentTimeMillis();
 
@@ -62,7 +64,7 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(access).timeout(5000).get();
+                Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
 
                 List<Article> articles = new LinkedList<Article>();
                 Elements links = doc.select("div.T2 a[href],div.T1 a[href]");
@@ -112,7 +114,7 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(catalogUrl).timeout(5000).get();
+                Document doc = Jsoup.connect(catalogUrl).userAgent(userAgent).timeout(5000).get();
 
                 Elements links = doc.select("div.header a[href]");
                 for (Element link : links) {
@@ -171,27 +173,57 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(access).timeout(5000).get();
-
                 List<Article> articles = new LinkedList<Article>();
-                Elements links = doc.select("div.T2 a[href],div.T1 a[href]");
-                for (Element link : links) {
-                    String href = link.attr("href");
-                    if (href.contains("art_")) {
-                        String id = href.replaceAll(".html", "");
-                        Article article = category.articleMap.get(id);
-                        if (article == null) {
-                            article = new Article();
-                            article.id = id;
-                            article.name = link.text();
-                            article.href = link.attr("abs:href");
-                            article.category = category;
-                            category.articleMap.put(id, article);
-                        }
+                Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
+                Elements tables = doc.select("table");
+                if (tables.size() >= 2) {
+                    Elements trs = tables.get(2).select("tbody tr");
+                    for (Element tr : trs) {
+                        Elements tds = tr.children();
+                        Element nameLink = tds.first().select("div.T2 a[href],div.T1 a[href]").first();
+                        if (nameLink != null) {
+                            String href = nameLink.attr("abs:href");
+                            if (href.contains("art_")) {
+                                String id = href.replaceAll(".html", "");
+                                Article article = category.articleMap.get(id);
+                                if (article == null) {
+                                    article = new Article();
+                                    article.id = id;
+                                    article.name = nameLink.text();
+                                    article.href = nameLink.attr("abs:href");
+                                    article.category = category;
+                                    category.articleMap.put(id, article);
+                                }
+                                Element authLink = tds.get(1).select("div.Auth a[href]").first();
+                                if (authLink != null) {
+                                    article.auth = authLink.text();
+                                }
 
-                        articles.add(article);
+                                articles.add(article);
+                            }
+                        }
                     }
                 }
+
+                // List<Article> articles = new LinkedList<Article>();
+                // Elements links = doc.select("div.T2 a[href],div.T1 a[href]");
+                // for (Element link : links) {
+                // String href = link.attr("href");
+                // if (href.contains("art_")) {
+                // String id = href.replaceAll(".html", "");
+                // Article article = category.articleMap.get(id);
+                // if (article == null) {
+                // article = new Article();
+                // article.id = id;
+                // article.name = link.text();
+                // article.href = link.attr("abs:href");
+                // article.category = category;
+                // category.articleMap.put(id, article);
+                // }
+                //
+                // articles.add(article);
+                // }
+                // }
 
                 String next = null;
                 Elements nexts = doc.select("div.NEXT a[href]");

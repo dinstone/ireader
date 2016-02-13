@@ -10,7 +10,7 @@ public class DnsTest {
 
     public static void main(String[] args) throws UnknownHostException {
         DnsCacheManipulator.loadDnsCacheConfig();
-        System.out.println("yi-see = " + InetAddress.getByName("www.yi-see.com").getHostAddress());
+        System.out.println("www.yi-see.com = " + InetAddress.getByName("www.yi-see.com").getHostAddress());
 
         DnsCacheManipulator.setDnsCache("www.hello.com", "192.168.1.1");
         // 支持IPv6地址

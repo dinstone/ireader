@@ -1,6 +1,8 @@
 
 package com.dinstone.ireader.task;
 
+import java.net.InetAddress;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -27,8 +29,13 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
         }
 
         if (event instanceof ContextRefreshedEvent) {
-            LOG.info("init repository start", event);
+            LOG.info("init repository start");
             DnsCacheManipulator.loadDnsCacheConfig();
+            try {
+                LOG.info("www.yi-see.com = {}", InetAddress.getByName("www.yi-see.com").getHostAddress());
+            } catch (Exception e) {
+                LOG.info("init dns error", e);
+            }
 
             RepositoryService service = applicationContext.getBean(RepositoryService.class);
             Repository repository = service.loadRepository();

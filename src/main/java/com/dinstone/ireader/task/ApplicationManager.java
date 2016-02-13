@@ -9,6 +9,7 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dcm.DnsCacheManipulator;
 import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.RepositoryManager;
 import com.dinstone.ireader.service.RepositoryService;
@@ -27,6 +28,8 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
 
         if (event instanceof ContextRefreshedEvent) {
             LOG.info("init repository start", event);
+            DnsCacheManipulator.loadDnsCacheConfig();
+
             RepositoryService service = applicationContext.getBean(RepositoryService.class);
             Repository repository = service.loadRepository();
             if (repository == null) {

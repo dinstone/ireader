@@ -57,7 +57,7 @@ public class ArticleUpdater implements Callable<Article> {
         try {
             article.parts = updateParts(article);
         } catch (Exception e) {
-            LOG.error("更新文章[{}]章节失败 ", article.name);
+            LOG.error("更新文章[{}]章节失败:{} ", article.name, e.getMessage());
             return;
         }
 
@@ -93,7 +93,7 @@ public class ArticleUpdater implements Callable<Article> {
             article.update = new Date();
             LOG.info("同步文章[{}]完成: {}", article.name, articleFile);
         } catch (Exception e) {
-            LOG.warn("同步文章[{}]第{}节时失败", article.name, index);
+            LOG.warn("同步文章[{}]第{}节时失败:{}", article.name, index, e.getMessage());
         } finally {
             if (writer != null) {
                 try {

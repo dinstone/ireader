@@ -184,6 +184,7 @@ public class CategoryService {
                         if (nameLink != null) {
                             String href = nameLink.attr("abs:href");
                             if (href.contains("art_")) {
+                                // base info
                                 String id = href.replaceAll(".html", "");
                                 Article article = category.articleMap.get(id);
                                 if (article == null) {
@@ -194,36 +195,23 @@ public class CategoryService {
                                     article.category = category;
                                     category.articleMap.put(id, article);
                                 }
+                                // auth info
                                 Element authLink = tds.get(1).select("div.Auth a[href]").first();
                                 if (authLink != null) {
                                     article.auth = authLink.text();
                                 }
-
+                                // status info
+                                String status = tds.get(2).text();
+                                if (status != null && status.contains("全文完")) {
+                                    article.status = "全文完";
+                                } else {
+                                    article.status = "连载中";
+                                }
                                 articles.add(article);
                             }
                         }
                     }
                 }
-
-                // List<Article> articles = new LinkedList<Article>();
-                // Elements links = doc.select("div.T2 a[href],div.T1 a[href]");
-                // for (Element link : links) {
-                // String href = link.attr("href");
-                // if (href.contains("art_")) {
-                // String id = href.replaceAll(".html", "");
-                // Article article = category.articleMap.get(id);
-                // if (article == null) {
-                // article = new Article();
-                // article.id = id;
-                // article.name = link.text();
-                // article.href = link.attr("abs:href");
-                // article.category = category;
-                // category.articleMap.put(id, article);
-                // }
-                //
-                // articles.add(article);
-                // }
-                // }
 
                 String next = null;
                 Elements nexts = doc.select("div.NEXT a[href]");

@@ -18,7 +18,7 @@ public class AsyncService {
     @Resource
     private Configuration configuration;
 
-    public ExecutorService executor = Executors.newFixedThreadPool(2);
+    public ExecutorService executor = Executors.newFixedThreadPool(1);
 
     public void destroy() {
         executor.shutdownNow();

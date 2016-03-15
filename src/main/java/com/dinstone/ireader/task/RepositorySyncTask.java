@@ -1,6 +1,8 @@
 
 package com.dinstone.ireader.task;
 
+import java.util.Random;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ public class RepositorySyncTask {
     private RepositoryService repositoryService;
 
     public void execute() {
+        waitAmoment();
+
         LOG.info("repository sync task begin");
         try {
             repositoryService.updateRepository(RepositoryManager.getInstance().getRepository());
@@ -26,6 +30,15 @@ public class RepositorySyncTask {
             LOG.warn("repository sync task error", e);
         }
         LOG.info("repository sync task finish");
+    }
+
+    private void waitAmoment() {
+        Random r = new Random();
+        int s = r.nextInt(60);
+        try {
+            Thread.sleep(s * 1000);
+        } catch (InterruptedException e1) {
+        }
     }
 
 }

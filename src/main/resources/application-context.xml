@@ -20,6 +20,6 @@
 	</bean>
 
 	<task:scheduled-tasks>
-		<task:scheduled ref="repositorySyncTask" method="execute" cron="0 0 0 * * *" />
+		<task:scheduled ref="repositorySyncTask" method="execute" cron="0 18 12 * * *" />
 	</task:scheduled-tasks>
 </beans>

@@ -157,7 +157,7 @@ public class ArticleUpdater implements Callable<Article> {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(part.url).userAgent(userAgent).timeout(5000).get();
+                Document doc = Jsoup.connect(part.url).referrer(article.href).userAgent(userAgent).timeout(5000).get();
                 Elements divs = doc.select("div.ART");
 
                 StringBuilder builder = new StringBuilder();
@@ -201,17 +201,18 @@ public class ArticleUpdater implements Callable<Article> {
         int tryCount = 1;
         while (true) {
             try {
-                Document doc = Jsoup.connect(url).userAgent(userAgent).timeout(5000).get();
+                Document doc = Jsoup.connect(url).referrer(article.category.href).userAgent(userAgent).timeout(5000)
+                    .get();
                 // extract auth,category,status
-                Elements bases = doc.select("span.TA");
-                for (Element base : bases) {
-                    // 作者: 御风楼主人 　 分类: 鬼话 　 [全文完]
-                    String[] bp = base.text().trim().replaceAll("　", "").split(" +");
-                    if (bp.length >= 5) {
-                        article.auth = bp[1];
-                        article.status = bp[4];
-                    }
-                }
+                // Elements bases = doc.select("span.TA");
+                // for (Element base : bases) {
+                // // 作者: 御风楼主人 　 分类: 鬼话 　 [全文完]
+                // String[] bp = base.text().trim().replaceAll("　", "").split(" +");
+                // if (bp.length >= 5) {
+                // article.auth = bp[1];
+                // article.status = bp[4];
+                // }
+                // }
 
                 // extract parts
                 List<Part> parts = new LinkedList<Part>();

@@ -189,12 +189,14 @@ public class CategoryService {
                                 Article article = category.articleMap.get(id);
                                 if (article == null) {
                                     article = new Article();
-                                    article.id = id;
-                                    article.name = nameLink.text();
-                                    article.href = nameLink.attr("abs:href");
-                                    article.category = category;
                                     category.articleMap.put(id, article);
                                 }
+                                // update base info
+                                article.id = id;
+                                article.name = nameLink.text();
+                                article.href = nameLink.attr("abs:href");
+                                article.category = category;
+
                                 // auth info
                                 Element authLink = tds.get(1).select("div.Auth a[href]").first();
                                 if (authLink != null) {

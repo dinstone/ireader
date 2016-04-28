@@ -182,7 +182,7 @@ public class CategoryService {
                         Elements tds = tr.children();
                         Element nameLink = tds.first().select("div.T2 a[href],div.T1 a[href]").first();
                         if (nameLink != null) {
-                            String href = nameLink.attr("abs:href");
+                            String href = nameLink.attr("href");
                             if (href.contains("art_")) {
                                 // base info
                                 String id = href.replaceAll(".html", "");

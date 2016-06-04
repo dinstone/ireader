@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -7,71 +6,91 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<title>爱读--排行榜</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" href="${contextPath}/fmt.css" type="text/css">
-<title>排行榜 文章列表</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="${contextPath}/img/favicon.ico">
+<link id="bs-css" href="${contextPath}/css/bootstrap-cerulean.min.css" rel="stylesheet">
+<link href="${contextPath}/css/charisma-app.css" rel="stylesheet">
+<script src="${contextPath}/bcs/jquery/jquery.min.js"></script>
+<script src="${contextPath}/bcs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="${contextPath}/js/jquery.cookie.js"></script>
+<script src="${contextPath}/js/jquery.history.js"></script>
+<script src="${contextPath}/js/charisma.js"></script>
 </head>
 <body>
-	<table width="900px" align="center" cellpadding="0" cellspacing="0">
-		<tbody>
-			<tr>
-				<td>
-					<div class="Header">
-						<c:forEach items="${categorys}" var="category">
-							<a href="${contextPath}/view/article/category/${category.id}-1">${category.name}</a> |
-						</c:forEach>
-						<a href="${contextPath}/view/article/list/1">排行榜</a>
-						<div class="FL">
-							<form action="${contextPath}/view/article/query">
-								<input type="text" size="20" maxlength="24" name="word" value=""><input
-									type="submit" value="搜 索">
-							</form>
+	<jsp:include page="topbar.jsp"></jsp:include>
+	<div class="ch-container">
+		<div class="row">
+			<div id="menu" class="col-sm-2 col-lg-2">
+				<jsp:include page="menu.jsp"></jsp:include>
+			</div>
+			<div id="content" class="col-lg-10 col-sm-10">
+				<div class="row">
+					<div class="box col-md-12">
+						<div class="box-inner">
+							<div class="box-header well" data-original-title="">
+								<h2>
+									<i class="glyphicon glyphicon-th"></i> 排行榜
+								</h2>
+								<div class="box-icon">
+									<a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up"></i></a>
+								</div>
+							</div>
+							<div class="box-content">
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<th>标题</th>
+											<th>作者</th>
+											<th>分类</th>
+											<th>状态</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach items="${articles}" var="article">
+											<tr class="line">
+												<td><a href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
+												<td>${article.auth}</td>
+												<td>${article.category.name}</td>
+												<td>${article.status}</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+								<div class="row">
+									<div class="col-md-12 center-block">
+										<div class="dataTables_paginate paging_bootstrap pagination">
+											<ul class="pagination">
+												<c:if test="${!empty pagenation.prev}">
+													<li class="prev"><a href="${contextPath}/view/article/list/${pagenation.prev}">［上一页］</a></li>
+												</c:if>
+												<c:if test="${empty pagenation.prev}">
+													<li class="prev disabled"><a href="#">［上一页］</a></li>
+												</c:if>
+												<li class="active"><a href="#">第${pagenation.current}/${pagenation.total}页</a></li>
+												<c:if test="${!empty pagenation.next}">
+													<li class="next"><a href="${contextPath}/view/article/list/${pagenation.next}">［下一页］</a></li>
+												</c:if>
+												<c:if test="${empty pagenation.next}">
+													<li class="next disabled"><a href="#">［下一页］</a></li>
+												</c:if>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<table width="900px" align="CENTER" cellpadding="0" cellspacing="0">
-		<c:forEach items="${articles}" var="article">
-			<tr class="line">
-				<td><a
-					href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
-				<td>${article.auth}</td>
-				<td>${article.category.name}</td>
-				<td>${article.status}</td>
-				<td><a
-					href="${contextPath}/view/article/download/${article.id}">下载TEXT</a></td>
-			</tr>
-		</c:forEach>
-		<tr>
-			<td></td>
-			<c:if test="${!empty pagenation.prev}">
-				<td><a
-					href="${contextPath}/view/article/list/${pagenation.prev}">［上一页］</a></td>
-			</c:if>
-			<c:if test="${empty pagenation.prev}">
-				<td></td>
-			</c:if>
-			<td>第${pagenation.current}/${pagenation.total}页</td>
-			<c:if test="${!empty pagenation.next}">
-				<td><a
-					href="${contextPath}/view/article/list/${pagenation.next}">［下一页］</a></td>
-			</c:if>
-			<c:if test="${empty pagenation.next}">
-				<td></td>
-			</c:if>
-			<td></td>
-		</tr>
-	</table>
-	<table width="90%" align="center" cellpadding="3" cellspacing="0"
-		border="0">
-		<tbody>
-			<tr>
-				<td align="center">© CopyRight 2015
-					爱易读所有作品由自动化设备收集于互联网.作品各种权益与责任归原作者所有.</td>
-			</tr>
-		</tbody>
-	</table>
+				</div>
+			</div>
+			<!-- content ends -->
+			<!--/#content.col-md-0-->
+		</div>
+		<!--/fluid-row-->
+		<hr>
+		<jsp:include page="footer.jsp"></jsp:include>
+	</div>
+	<!--/.fluid-container-->
 </body>
 </html>

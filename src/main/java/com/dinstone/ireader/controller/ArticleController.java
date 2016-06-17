@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -198,11 +199,10 @@ public class ArticleController {
         try {
             File artFile = article.file;
             response.setHeader("Content-Length", String.valueOf(artFile.length()));
+            response.setContentType("application/x-download");
 
-            response.setContentType("application/x-msdownload;");
-
-            String downloadName = new String(article.name.getBytes("utf-8"), "ISO8859-1");
-            response.setHeader("Content-disposition", "attachment; filename=" + downloadName + ".txt");
+            String downloadName = URLEncoder.encode(article.name + ".txt", "UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + downloadName);
 
             bis = new BufferedInputStream(new FileInputStream(artFile));
             bos = new BufferedOutputStream(response.getOutputStream());
@@ -211,6 +211,7 @@ public class ArticleController {
             while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
                 bos.write(buff, 0, bytesRead);
             }
+            bos.flush();
         } finally {
             if (bis != null)
                 bis.close();

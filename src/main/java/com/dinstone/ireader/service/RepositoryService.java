@@ -61,7 +61,7 @@ public class RepositoryService {
 
         categoryService.buildTopCategory(repository);
 
-        writeRepository(repository);
+        // writeRepository(repository);
 
         LOG.info("创建文章库完成");
         return repository;

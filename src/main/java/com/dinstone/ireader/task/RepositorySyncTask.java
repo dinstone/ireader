@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.RepositoryManager;
 import com.dinstone.ireader.service.RepositoryService;
 
@@ -25,7 +26,8 @@ public class RepositorySyncTask {
 
         LOG.info("repository sync task begin");
         try {
-            repositoryService.updateRepository(RepositoryManager.getInstance().getRepository());
+            Repository repository = RepositoryManager.getInstance().getRepository();
+            repositoryService.updateRepository(repository);
         } catch (Exception e) {
             LOG.warn("repository sync task error", e);
         }

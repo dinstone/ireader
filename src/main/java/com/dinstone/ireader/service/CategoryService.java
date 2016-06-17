@@ -42,7 +42,7 @@ public class CategoryService {
         int pageIndex = 1;
         Category category = repository.topCategory;
         category.pages.clear();
-        while (next != null && pageIndex < 3) {
+        while (next != null && pageIndex < 8) {
             LOG.info("build category[{}] page[{}] from {} ", category.name, pageIndex, next);
 
             try {

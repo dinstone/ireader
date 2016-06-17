@@ -27,24 +27,19 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
 
         if (event instanceof ContextRefreshedEvent) {
             LOG.info("init repository start");
-            // DnsCacheManipulator.loadDnsCacheConfig();
-            // try {
-            // LOG.info("www.yi-see.com = {}", InetAddress.getByName("www.yi-see.com").getHostAddress());
-            // } catch (Exception e) {
-            // LOG.info("init dns error", e);
-            // }
 
             RepositoryService service = applicationContext.getBean(RepositoryService.class);
-            Repository repository = service.loadRepository();
-            if (repository == null) {
-                try {
+            try {
+                Repository repository = service.loadRepository();
+                if (repository == null) {
                     repository = service.createRepository();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    service.writeRepository(repository);
                 }
+                RepositoryManager.getInstance().setRepository(repository);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
-            RepositoryManager.getInstance().setRepository(repository);
             LOG.info("init repository finish");
         }
     }

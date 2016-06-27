@@ -2,7 +2,7 @@
 <configuration>
 	<property>
 		<name>max.page.number</name>
-		<value>400</value>
+		<value>4</value>
 	</property>
 	<property>
 		<name>repository.dir</name>

@@ -49,7 +49,7 @@
 									</thead>
 									<tbody>
 										<tr class="line">
-											<td colspan="4"><p class="alert alert-success">${content}</p></td>
+											<td colspan="4"><p class="alert">${content}</p></td>
 										</tr>
 									</tbody>
 								</table>

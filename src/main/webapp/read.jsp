@@ -29,7 +29,7 @@
 				<div class="row">
 					<div class="box col-md-12">
 						<div class="box-inner">
-							<div class="box-header well" data-original-title="">
+							<div class="box-header well">
 								<h2>
 									<i class="glyphicon glyphicon-th"></i> ${article.name}
 								</h2>
@@ -49,7 +49,7 @@
 									</thead>
 									<tbody>
 										<tr class="line">
-											<td colspan="4"><p class="alert">${content}</p></td>
+											<td colspan="4"><p style="font-size: 24px;">${content}</p></td>
 										</tr>
 									</tbody>
 								</table>

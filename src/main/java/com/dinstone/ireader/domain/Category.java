@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 分类
  * 
@@ -24,6 +26,7 @@ public class Category implements Comparable<Category>, Serializable {
 
     public String href;
 
+    @JsonIgnore
     public Map<String, Article> articleMap = new ConcurrentHashMap<String, Article>();
 
     public List<Pagenation> pages = new CopyOnWriteArrayList<Pagenation>();

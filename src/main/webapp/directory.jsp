@@ -51,7 +51,7 @@
 										<tr class="line">
 											<td colspan="4"><p class="btn-group">
 													<c:forEach items="${article.parts}" var="part">
-														<a class="btn btn-default" href="${contextPath}/view/article/read/${article.id}-${part.index}">${part.name}</a>
+														<a class="btn btn-default" href="${contextPath}/view/article/read/${article.id}-${part.index}">第${part.index}节</a>
 													</c:forEach>
 												</p></td>
 										</tr>

@@ -25,16 +25,19 @@ public class Article implements Serializable, Comparable<Article> {
     @JsonIgnore
     public Category category;
 
-    public String auth;
+    public String author;
 
     public String status;
 
     public String href;
 
+    @JsonIgnore
     public File file;
 
+    @JsonIgnore
     public volatile boolean proccess;
 
+    @JsonIgnore
     public volatile Date update;
 
     public Part[] parts;
@@ -52,7 +55,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getAuth() {
-        return auth;
+        return author;
     }
 
     public Category getCategory() {
@@ -77,7 +80,7 @@ public class Article implements Serializable, Comparable<Article> {
 
     @Override
     public String toString() {
-        return "Article [id=" + id + ", name=" + name + ", auth=" + auth + ", category=" + category + ", status="
+        return "Article [id=" + id + ", name=" + name + ", author=" + author + ", category=" + category + ", status="
                 + status + "]";
     }
 

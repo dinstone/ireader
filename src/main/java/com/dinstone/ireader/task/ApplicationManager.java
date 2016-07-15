@@ -33,8 +33,9 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
                 Repository repository = service.loadRepository();
                 if (repository == null) {
                     repository = service.createRepository();
-                    service.writeRepository(repository);
                 }
+
+                service.writeRepository(repository);
                 RepositoryManager.getInstance().setRepository(repository);
             } catch (Exception e) {
                 throw new RuntimeException(e);

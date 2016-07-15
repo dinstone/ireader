@@ -47,7 +47,7 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/query")
-    public ModelAndView list(@RequestParam String word) {
+    public ModelAndView query(@RequestParam String word) {
         Repository repository = RepositoryManager.getInstance().getRepository();
         Collection<Article> articles = repository.articleMap.values();
 

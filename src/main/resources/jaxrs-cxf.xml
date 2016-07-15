@@ -5,9 +5,11 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<jaxrs:server id="keeper" address="/">
+	<jaxrs:server address="/">
 		<jaxrs:serviceBeans>
 			<ref bean="categoryResource" />
+			<ref bean="articleResource" />
+			<ref bean="appResource" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />

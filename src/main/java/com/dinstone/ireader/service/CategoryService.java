@@ -33,8 +33,6 @@ public class CategoryService {
     @Resource
     private AsyncService asyncService;
 
-    private String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
-
     public void buildTopCategory(Repository repository) {
         long s = System.currentTimeMillis();
 
@@ -42,7 +40,7 @@ public class CategoryService {
         int pageIndex = 1;
         Category category = repository.topCategory;
         category.pages.clear();
-        while (next != null && pageIndex < 8) {
+        while (next != null && pageIndex < configuration.getTopMaxPageNumber()) {
             LOG.info("build category[{}] page[{}] from {} ", category.name, pageIndex, next);
 
             try {
@@ -64,6 +62,7 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
+                String userAgent = configuration.getUserAgent();
                 Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
 
                 List<Article> articles = new LinkedList<Article>();
@@ -114,6 +113,7 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
+                String userAgent = configuration.getUserAgent();
                 Document doc = Jsoup.connect(catalogUrl).userAgent(userAgent).timeout(5000).get();
 
                 Elements links = doc.select("div.header a[href]");
@@ -174,6 +174,7 @@ public class CategoryService {
         while (true) {
             try {
                 List<Article> articles = new LinkedList<Article>();
+                String userAgent = configuration.getUserAgent();
                 Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
                 Elements tables = doc.select("table");
                 if (tables.size() >= 2) {
@@ -200,7 +201,7 @@ public class CategoryService {
                                 // auth info
                                 Element authLink = tds.get(1).select("div.Auth a[href]").first();
                                 if (authLink != null) {
-                                    article.auth = authLink.text();
+                                    article.author = authLink.text();
                                 }
                                 // status info
                                 String status = tds.get(2).text();

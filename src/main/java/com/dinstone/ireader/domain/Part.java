@@ -11,16 +11,10 @@ public class Part implements Comparable<Part> {
 
     public int index;
 
-    public String name;
-
     public String url;
 
     public int getIndex() {
         return index;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getUrl() {

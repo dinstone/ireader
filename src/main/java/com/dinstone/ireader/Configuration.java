@@ -35,6 +35,8 @@ public class Configuration {
     /** Suffix for system property placeholders: "}" */
     private static final String PLACEHOLDER_SUFFIX = "}";
 
+    private static final String defaultUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
+
     protected final Properties properties = new Properties();
 
     /**
@@ -438,6 +440,14 @@ public class Configuration {
 
     public String getRepositoryDir() {
         return get("repository.dir", System.getProperty("user.home") + "/" + "ireader");
+    }
+
+    public int getTopMaxPageNumber() {
+        return getInt("top.max.page.number", getMaxPageNumber());
+    }
+
+    public String getUserAgent() {
+        return get("request.user.agent", defaultUserAgent);
     }
 
 }

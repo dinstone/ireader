@@ -2,7 +2,6 @@
 package com.dinstone.ireader.facade;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,26 +20,38 @@ import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.service.RepositoryManager;
 
 @Service
-@Path("/category")
+@Path("/app")
 @Produces(MediaType.APPLICATION_JSON)
-public class CategoryResource {
+public class AppResource {
 
     @GET
-    @Path("/list")
-    public List<Map<String, String>> list() {
-        List<Map<String, String>> clist = new ArrayList<Map<String, String>>();
-        Collection<Category> categorys = RepositoryManager.getInstance().getRepository().categorys;
-        if (categorys != null) {
-            for (Category category : categorys) {
-                HashMap<String, String> cat = new HashMap<String, String>();
-                cat.put("id", category.getId());
-                cat.put("name", category.getName());
-                cat.put("pageSize", "" + category.getPages().size());
-                clist.add(cat);
+    @Path("/patch/{appVersion}/{patchVersion}")
+    public List<Map<String, String>> patch(@PathParam("appVersion") String appVersion,
+            @PathParam("patchVersion") String patchVersion) {
+        List<Map<String, String>> patchList = new ArrayList<Map<String, String>>();
+
+        int pv = 0;
+        if (patchVersion != null) {
+            try {
+                pv = Integer.parseInt(patchVersion);
+            } catch (NumberFormatException e) {
+                // ignore;
             }
         }
 
-        return clist;
+        for (int i = 1; i < 5; i++) {
+            if (pv < i) {
+                HashMap<String, String> patchInfoMap = new HashMap<String, String>();
+                patchInfoMap.put("appVersionName", appVersion);
+                patchInfoMap.put("patchVersionName", "" + i);
+                patchInfoMap.put("patchFileUrl", "" + (pv + i));
+                patchInfoMap.put("patchFileMd5", "" + (pv + i));
+
+                patchList.add(patchInfoMap);
+            }
+        }
+
+        return patchList;
     }
 
     @GET

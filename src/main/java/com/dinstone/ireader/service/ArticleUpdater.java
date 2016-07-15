@@ -30,7 +30,7 @@ public class ArticleUpdater implements Callable<Article> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArticleUpdater.class);
 
-    private static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
+    private String userAgent;
 
     private Article article;
 
@@ -38,6 +38,7 @@ public class ArticleUpdater implements Callable<Article> {
 
     public ArticleUpdater(Article article, Configuration config) {
         this.article = article;
+        this.userAgent = config.getUserAgent();
         this.articleDir = new File(config.getRepositoryDir(), article.category.id + "/" + article.id);
     }
 
@@ -203,16 +204,6 @@ public class ArticleUpdater implements Callable<Article> {
             try {
                 Document doc = Jsoup.connect(url).referrer(article.category.href).userAgent(userAgent).timeout(5000)
                     .get();
-                // extract auth,category,status
-                // Elements bases = doc.select("span.TA");
-                // for (Element base : bases) {
-                // // 作者: 御风楼主人 　 分类: 鬼话 　 [全文完]
-                // String[] bp = base.text().trim().replaceAll("　", "").split(" +");
-                // if (bp.length >= 5) {
-                // article.auth = bp[1];
-                // article.status = bp[4];
-                // }
-                // }
 
                 // extract parts
                 List<Part> parts = new LinkedList<Part>();
@@ -225,7 +216,6 @@ public class ArticleUpdater implements Callable<Article> {
 
                         Part part = new Part();
                         part.index = index;
-                        part.name = name;
                         part.url = href;
 
                         parts.add(part);

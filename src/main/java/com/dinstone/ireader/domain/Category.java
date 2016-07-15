@@ -2,12 +2,9 @@
 package com.dinstone.ireader.domain;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * 分类
@@ -26,18 +23,18 @@ public class Category implements Comparable<Category>, Serializable {
 
     public String href;
 
-    @JsonIgnore
-    public Map<String, Article> articleMap = new ConcurrentHashMap<String, Article>();
+    public boolean persistent = true;
 
-    public List<Pagenation> pages = new CopyOnWriteArrayList<Pagenation>();
+    public SortedSet<Article> articleSet = new TreeSet<Article>();
 
     public Category() {
         super();
     }
 
-    public Category(String id, String name) {
+    public Category(String id, String name, boolean persistent) {
         this.id = id;
         this.name = name;
+        this.persistent = persistent;
     }
 
     @Override
@@ -57,10 +54,6 @@ public class Category implements Comparable<Category>, Serializable {
         return href;
     }
 
-    public List<Pagenation> getPages() {
-        return pages;
-    }
-
     @Override
     public int compareTo(Category other) {
         if (other == null) {
@@ -73,4 +66,10 @@ public class Category implements Comparable<Category>, Serializable {
         return this.id.compareTo(other.id);
     }
 
+    public Pagenation getPageArticles(int pageNumber) {
+        Article[] articles = articleSet.toArray(new Article[0]);
+        Pagenation pagenation = new Pagenation(articleSet.size(), pageNumber);
+        pagenation.articles = Arrays.copyOfRange(articles, pagenation.sIndex, pagenation.eIndex);
+        return pagenation;
+    }
 }

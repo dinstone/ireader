@@ -1,26 +1,40 @@
 
 package com.dinstone.ireader.service;
 
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
 import com.dinstone.ireader.domain.Repository;
 
+@Service
 public class RepositoryManager {
 
-    private static RepositoryManager instance = new RepositoryManager();
-
-    public static RepositoryManager getInstance() {
-        return instance;
-    }
+    @Resource
+    private RepositoryService repositoryService;
 
     private Repository repository;
 
-    private RepositoryManager() {
+    public synchronized void createRepository() throws Exception {
+        initRepository();
     }
 
-    public synchronized void setRepository(Repository repository) {
-        this.repository = repository;
+    public synchronized void updateRepository() throws Exception {
+        initRepository();
     }
 
-    public synchronized Repository getRepository() {
+    protected void initRepository() throws Exception {
+        if (repository == null) {
+            repository = repositoryService.loadRepository();
+            if (repository == null) {
+                repository = repositoryService.createRepository();
+            }
+        } else {
+            repositoryService.updateRepository(repository);
+        }
+    }
+
+    public Repository getRepository() {
         return repository;
     }
 

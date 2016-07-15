@@ -450,4 +450,8 @@ public class Configuration {
         return get("request.user.agent", defaultUserAgent);
     }
 
+    public int getUpdateInterval() {
+        return getInt("article.update.interval", 24 * 60 * 60);
+    }
+
 }

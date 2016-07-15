@@ -9,9 +9,7 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
-import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.RepositoryManager;
-import com.dinstone.ireader.service.RepositoryService;
 
 @Service
 public class ApplicationManager implements ApplicationListener<ApplicationContextEvent> {
@@ -28,15 +26,8 @@ public class ApplicationManager implements ApplicationListener<ApplicationContex
         if (event instanceof ContextRefreshedEvent) {
             LOG.info("init repository start");
 
-            RepositoryService service = applicationContext.getBean(RepositoryService.class);
             try {
-                Repository repository = service.loadRepository();
-                if (repository == null) {
-                    repository = service.createRepository();
-                }
-
-                service.writeRepository(repository);
-                RepositoryManager.getInstance().setRepository(repository);
+                applicationContext.getBean(RepositoryManager.class).createRepository();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

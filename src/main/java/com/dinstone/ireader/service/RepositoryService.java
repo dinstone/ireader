@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import com.dinstone.ireader.Configuration;
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
-import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.domain.Repository;
 
 @Service
@@ -44,56 +42,28 @@ public class RepositoryService {
         LOG.info("创建文章库开始");
         Repository repository = new Repository();
 
+        // 抽取分类
         List<Category> categories = categoryService.extractCategorys();
-        for (Category category : categories) {
-            if (!repository.categoryMap.containsKey(category.id)) {
-                repository.categoryMap.put(category.id, category);
-            }
-        }
-        repository.categorys = repository.categoryMap.values();
-
-        for (Category category : repository.categorys) {
-            categoryService.buildCategroy(category);
-
-            repository.articleMap.putAll(category.articleMap);
-        }
-
-        categoryService.buildTopCategory(repository);
-
-        // writeRepository(repository);
+        // 刷新文章库
+        refreshRepository(repository, categories);
 
         LOG.info("创建文章库完成");
+
+        writeRepository(repository);
+
         return repository;
     }
 
     public void updateRepository(Repository repository) {
-        if (repository == null) {
-            LOG.warn("无效的文章库对象：{}", repository);
-            return;
-        }
+        LOG.info("更新文章库开始");
 
         try {
             List<Category> categories = categoryService.extractCategorys();
-            for (Category category : categories) {
-                if (!repository.categoryMap.containsKey(category.id)) {
-                    repository.categoryMap.put(category.id, category);
-                }
-            }
-            repository.categorys = repository.categoryMap.values();
+            refreshRepository(repository, categories);
 
-            for (Category category : repository.categorys) {
-                categoryService.buildCategroy(category);
-
-                repository.articleMap.putAll(category.articleMap);
-            }
-
-            categoryService.buildTopCategory(repository);
-
-            repository.updateTime = new Date();
+            LOG.info("更新文章库完成");
 
             writeRepository(repository);
-
-            // updateArticles(repository.articleMap.values());
         } catch (Exception e) {
             LOG.warn("update repository error", e);
         }
@@ -105,37 +75,19 @@ public class RepositoryService {
         if (dataFile.exists()) {
             BufferedReader reader = null;
             try {
-                LOG.info("加载文章库从本地文件系统开始：{}", dataFile);
+                LOG.info("开始加载文章库从本地文件系统：{}", dataFile);
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile), "utf-8"));
-                String temp = null;
                 List<Category> categorys = new LinkedList<Category>();
+                String temp = null;
                 while ((temp = reader.readLine()) != null) {
                     Category category = serializer.deserialize(temp.getBytes("utf-8"), Category.class);
                     categorys.add(category);
                 }
 
-                LOG.info("加载文章库从本地文件系统完成：{}", dataFile);
+                LOG.info("完成加载文章库从本地文件系统：{}", dataFile);
 
                 Repository repository = new Repository();
-
-                LOG.info("初始化文章库开始");
-                for (Category category : categorys) {
-                    repository.categoryMap.put(category.id, category);
-
-                    for (Pagenation page : category.pages) {
-                        for (Article article : page.articles) {
-                            article.category = category;
-                            category.articleMap.put(article.id, article);
-                        }
-                    }
-
-                    repository.articleMap.putAll(category.articleMap);
-                }
-
-                repository.categorys = repository.categoryMap.values();
-
-                categoryService.buildTopCategory(repository);
-                LOG.info("初始化文章库完成");
+                refreshRepository(repository, categorys);
 
                 return repository;
             } catch (Exception e) {
@@ -155,11 +107,6 @@ public class RepositoryService {
     }
 
     public void writeRepository(Repository repository) {
-        if (repository == null) {
-            LOG.warn("无效的文章库对象：{}", repository);
-            return;
-        }
-
         BufferedOutputStream writer = null;
         try {
             File dataFile = new File(configuration.getRepositoryDir(), "repository.data");
@@ -169,12 +116,14 @@ public class RepositoryService {
             LOG.info("回写文章库到本地文件系统开始：{}", dataFile);
 
             writer = new BufferedOutputStream(new FileOutputStream(dataFile));
-            for (Category category : repository.categorys) {
-                byte[] bytes = serializer.serialize(category);
-                writer.write(bytes);
-                writer.write('\r');
-                writer.write('\n');
-                writer.flush();
+            for (Category category : repository.categoryMap.values()) {
+                if (category.persistent) {
+                    byte[] bytes = serializer.serialize(category);
+                    writer.write(bytes);
+                    writer.write('\r');
+                    writer.write('\n');
+                    writer.flush();
+                }
             }
 
             LOG.info("回写文章库到本地文件系统完成：{}", dataFile);
@@ -190,25 +139,40 @@ public class RepositoryService {
         }
     }
 
-    public Article findAticle(Repository repository, String articleId) {
-        Article article = repository.articleMap.get(articleId);
-        if (article != null && needUpdate(article.update)) {
-            asyncService.updateArticle(article);
-        }
-        return article;
-    }
-
-    private boolean needUpdate(Date update) {
-        if (update == null) {
-            return true;
-        }
-
-        long diff = new Date().getTime() - update.getTime();
-        if (diff > 24 * 60 * 60 * 1000) {
-            return true;
+    /**
+     * 刷新文章库,从远程抓取最新文章到库中
+     * 
+     * @param repository
+     * @param categories
+     */
+    protected void refreshRepository(Repository repository, List<Category> categories) {
+        for (Category category : categories) {
+            if (!repository.categoryMap.containsKey(category.id)) {
+                repository.categoryMap.put(category.id, category);
+            }
         }
 
-        return false;
+        // 构建分类中的文章
+        for (Category category : repository.categoryMap.values()) {
+            categoryService.buildCategroy(category);
+
+            // 将文章放入文章库
+            for (Article article : category.articleSet) {
+                repository.articleMap.put(article.id, article);
+            }
+        }
+
+        // 初始化全集和排行榜
+        Category finCategory = new Category("artc_98", "全集", false);
+        Category topCategory = new Category("artc_99", "排行榜", false);
+        for (Article article : repository.articleMap.values()) {
+            topCategory.articleSet.add(article);
+            if ("全文完".equals(article.status)) {
+                finCategory.articleSet.add(article);
+            }
+        }
+        repository.categoryMap.put(finCategory.id, finCategory);
+        repository.categoryMap.put(topCategory.id, topCategory);
     }
 
 }

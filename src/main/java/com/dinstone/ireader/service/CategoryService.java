@@ -1,10 +1,8 @@
 
 package com.dinstone.ireader.service;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -19,8 +17,6 @@ import org.springframework.stereotype.Service;
 import com.dinstone.ireader.Configuration;
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
-import com.dinstone.ireader.domain.Pagenation;
-import com.dinstone.ireader.domain.Repository;
 
 @Service
 public class CategoryService {
@@ -32,80 +28,6 @@ public class CategoryService {
 
     @Resource
     private AsyncService asyncService;
-
-    public void buildTopCategory(Repository repository) {
-        long s = System.currentTimeMillis();
-
-        String next = "http://www.yi-see.com/weeksort_1.html";
-        int pageIndex = 1;
-        Category category = repository.topCategory;
-        category.pages.clear();
-        while (next != null && pageIndex < configuration.getTopMaxPageNumber()) {
-            LOG.info("build category[{}] page[{}] from {} ", category.name, pageIndex, next);
-
-            try {
-                next = buildTopCategoryPagenation(repository.articleMap, category, pageIndex, next);
-            } catch (Exception e) {
-                LOG.warn("build category[{}] page[{}] error", category.name, pageIndex);
-                break;
-            }
-
-            pageIndex++;
-        }
-
-        long e = System.currentTimeMillis();
-        LOG.info("build category[{}] take {}s", category.name, (e - s) / 1000);
-    }
-
-    private String buildTopCategoryPagenation(Map<String, Article> articleMap, Category category, int pageIndex,
-            String access) throws Exception {
-        int tryCount = 1;
-        while (true) {
-            try {
-                String userAgent = configuration.getUserAgent();
-                Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
-
-                List<Article> articles = new LinkedList<Article>();
-                Elements links = doc.select("div.T2 a[href],div.T1 a[href]");
-                for (Element link : links) {
-                    String href = link.attr("href");
-                    if (href.contains("art_")) {
-                        String id = href.replaceAll(".html", "");
-                        String name = link.text();
-                        Article article = articleMap.get(id);
-                        if (article != null) {
-                            articles.add(article);
-                        } else {
-                            LOG.warn("unkown article {}:{}", id, name);
-                        }
-                    }
-                }
-
-                String next = null;
-                Elements nexts = doc.select("div.NEXT a[href]");
-                for (Element link : nexts) {
-                    String name = link.text();
-                    if (name.contains("下一页")) {
-                        next = link.attr("abs:href");
-                        break;
-                    }
-                }
-
-                Pagenation pagenation = new Pagenation();
-                pagenation.access = access;
-                pagenation.index = pageIndex;
-                pagenation.articles = articles;
-                category.pages.add(pagenation);
-
-                return next;
-            } catch (Exception e) {
-                tryCount++;
-                if (tryCount > 3) {
-                    throw e;
-                }
-            }
-        }
-    }
 
     public List<Category> extractCategorys() throws Exception {
         List<Category> categories = new LinkedList<Category>();
@@ -124,8 +46,9 @@ public class CategoryService {
                         cat.id = href.substring(1).replaceAll(".html", "");
                         cat.name = link.text();
                         cat.href = link.attr("abs:href");
-
-                        categories.add(cat);
+                        if (!"artc_0".equals(cat.id)) {
+                            categories.add(cat);
+                        }
                     }
                 }
 
@@ -138,16 +61,12 @@ public class CategoryService {
             }
         }
 
-        Collections.sort(categories);
-
         LOG.info("同步文章分类 : {}", categories);
         return categories;
     }
 
     public void buildCategroy(Category category) {
         long s = System.currentTimeMillis();
-
-        category.pages.clear();
 
         int pageIndex = 1;
         String next = category.href;
@@ -173,7 +92,6 @@ public class CategoryService {
         int tryCount = 1;
         while (true) {
             try {
-                List<Article> articles = new LinkedList<Article>();
                 String userAgent = configuration.getUserAgent();
                 Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
                 Elements tables = doc.select("table");
@@ -185,15 +103,9 @@ public class CategoryService {
                         if (nameLink != null) {
                             String href = nameLink.attr("href");
                             if (href.contains("art_")) {
+                                Article article = new Article();
                                 // base info
-                                String id = href.replaceAll(".html", "");
-                                Article article = category.articleMap.get(id);
-                                if (article == null) {
-                                    article = new Article();
-                                    category.articleMap.put(id, article);
-                                }
-                                // update base info
-                                article.id = id;
+                                article.id = href.replaceAll(".html", "");
                                 article.name = nameLink.text();
                                 article.href = nameLink.attr("abs:href");
                                 article.category = category;
@@ -203,6 +115,7 @@ public class CategoryService {
                                 if (authLink != null) {
                                     article.author = authLink.text();
                                 }
+
                                 // status info
                                 String status = tds.get(2).text();
                                 if (status != null && status.contains("全文完")) {
@@ -210,7 +123,8 @@ public class CategoryService {
                                 } else {
                                     article.status = "连载中";
                                 }
-                                articles.add(article);
+
+                                category.articleSet.add(article);
                             }
                         }
                     }
@@ -225,12 +139,6 @@ public class CategoryService {
                         break;
                     }
                 }
-
-                Pagenation pagenation = new Pagenation();
-                pagenation.access = access;
-                pagenation.index = pageIndex;
-                pagenation.articles = articles;
-                category.pages.add(pagenation);
 
                 return next;
             } catch (Exception e) {

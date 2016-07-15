@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Part;
 import com.dinstone.ireader.domain.Repository;
+import com.dinstone.ireader.service.ArticleService;
 import com.dinstone.ireader.service.RepositoryManager;
-import com.dinstone.ireader.service.RepositoryService;
 
 @Service
 @Path("/article")
@@ -34,12 +34,15 @@ import com.dinstone.ireader.service.RepositoryService;
 public class ArticleResource {
 
     @Resource
-    private RepositoryService service;
+    private RepositoryManager repositoryManager;
+
+    @Resource
+    private ArticleService articleService;
 
     @GET
     @Path("/query")
     public List<Map<String, String>> query(@QueryParam("kw") String keyword) {
-        Repository repository = RepositoryManager.getInstance().getRepository();
+        Repository repository = repositoryManager.getRepository();
         Collection<Article> articles = repository.articleMap.values();
 
         List<Map<String, String>> aml = new LinkedList<Map<String, String>>();
@@ -61,8 +64,8 @@ public class ArticleResource {
     @GET
     @Path("/directory/{articleId}")
     public Map<String, Object> directory(@PathParam("articleId") String articleId) {
-        Repository repository = RepositoryManager.getInstance().getRepository();
-        Article article = service.findAticle(repository, articleId);
+        Repository repository = repositoryManager.getRepository();
+        Article article = articleService.findAticle(repository, articleId);
         if (article == null) {
             throw new IllegalStateException("文章正在更新，请稍后再试.");
         }
@@ -89,8 +92,8 @@ public class ArticleResource {
     @GET
     @Path("/content/{articleId}/{partIndex}")
     public Map<String, Object> content(@PathParam("articleId") String articleId, @PathParam("partIndex") int partIndex) {
-        Repository repository = RepositoryManager.getInstance().getRepository();
-        Article article = service.findAticle(repository, articleId);
+        Repository repository = repositoryManager.getRepository();
+        Article article = articleService.findAticle(repository, articleId);
         if (article == null) {
             throw new IllegalStateException("文章正在更新，请稍后再试.");
         }

@@ -9,10 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jsoup.Jsoup;
@@ -36,9 +33,12 @@ public class ArticleUpdater implements Callable<Article> {
 
     private File articleDir;
 
-    public ArticleUpdater(Article article, Configuration config) {
+    private ArticleService articleService;
+
+    public ArticleUpdater(Article article, Configuration config, ArticleService articleService) {
         this.article = article;
         this.userAgent = config.getUserAgent();
+        this.articleService = articleService;
         this.articleDir = new File(config.getRepositoryDir(), article.category.id + "/" + article.id);
     }
 
@@ -56,9 +56,12 @@ public class ArticleUpdater implements Callable<Article> {
     public void update() {
         article.proccess = true;
         try {
-            article.parts = updateParts(article);
+            if (article.parts == null) {
+                article.parts = articleService.extractDirectory(article);
+                articleService.writeDirectory(article);
+            }
         } catch (Exception e) {
-            LOG.error("更新文章[{}]章节失败:{} ", article.name, e.getMessage());
+            LOG.error("更新文章[{}]目录失败:{} ", article.name, e.getMessage());
             return;
         }
 
@@ -195,52 +198,6 @@ public class ArticleUpdater implements Callable<Article> {
         }
 
         return contents;
-    }
-
-    private Part[] updateParts(Article article) throws IOException {
-        String url = article.href;
-        int tryCount = 1;
-        while (true) {
-            try {
-                Document doc = Jsoup.connect(url).referrer(article.category.href).userAgent(userAgent).timeout(5000)
-                    .get();
-
-                // extract parts
-                List<Part> parts = new LinkedList<Part>();
-                Elements links = doc.select("a[href]");
-                for (Element link : links) {
-                    String href = link.attr("abs:href");
-                    if (href.contains("read_")) {
-                        String name = link.text();
-                        int index = parseIndex(name);
-
-                        Part part = new Part();
-                        part.index = index;
-                        part.url = href;
-
-                        parts.add(part);
-                    }
-                }
-
-                Part[] array = parts.toArray(new Part[parts.size()]);
-                Arrays.sort(array);
-
-                return array;
-            } catch (Exception e) {
-                tryCount++;
-                if (tryCount > 3) {
-                    throw e;
-                }
-            }
-        }
-    }
-
-    private int parseIndex(String name) {
-        try {
-            return Integer.parseInt(name.replaceAll("\\D+", ""));
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
 }

@@ -18,14 +18,23 @@ public class SortedTest {
         }
 
         Article a = new Article();
-        a.id = "art-" + 2;
-        a.read = 15;
-        ts.add(a);
+        a.id = "art-" + 4;
+        a.read = 3;
+        boolean f = ts.add(a);
+        System.out.println(f);
 
         System.out.println(ts);
 
-        treeset();
+        a.read = 1;
 
+        System.out.println(new TreeSet<Article>(ts));
+
+        // treeset();
+
+        // treemap();
+    }
+
+    protected static void treemap() {
         TreeMap<String, String> tm = new TreeMap<String, String>();
         tm.put("artc-99", "排行榜");
         tm.put("artc-2", "舞文");

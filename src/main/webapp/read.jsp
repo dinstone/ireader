@@ -41,7 +41,7 @@
 								<table class="table table-condensed">
 									<thead>
 										<tr>
-											<th>作者:${article.auth}</th>
+											<th>作者:${article.author}</th>
 											<th>分类:${article.category.name}</th>
 											<th>状态:${article.status}</th>
 											<th>第${pagenation.current}/${pagenation.total}节</th>

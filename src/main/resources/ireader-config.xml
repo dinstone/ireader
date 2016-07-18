@@ -5,7 +5,7 @@
 		<value>400</value>
 	</property>
 	<property>
-		<name>max.page.number</name>
+		<name>top.max.page.number</name>
 		<value>10</value>
 	</property>
 	<property>

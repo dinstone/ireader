@@ -2,6 +2,7 @@
 package com.dinstone.ireader.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 分页
@@ -28,7 +29,7 @@ public class Pagenation implements Serializable {
 
     public int eIndex;
 
-    public Article[] articles;
+    public List<Article> articles;
 
     public Pagenation(int totalSize, int pageNumber) {
         // 计算总页数
@@ -42,7 +43,7 @@ public class Pagenation implements Serializable {
         // 初始化当前页数
         if (pageNumber > total) {
             pageNumber = total;
-        } else if (pageNumber < 0) {
+        } else if (pageNumber <= 0) {
             pageNumber = 1;
         }
         current = pageNumber;
@@ -50,13 +51,41 @@ public class Pagenation implements Serializable {
         if (current > 1) {
             prev = current - 1;
         }
-        if (current < totalSize) {
+        if (current < total) {
             next = current + 1;
         }
 
         // 计算文章开始结束索引
         sIndex = (current - 1) * page_size;
-        eIndex = current * page_size;
+        eIndex = Math.min(current * page_size, totalSize);
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getPrev() {
+        return prev;
+    }
+
+    public int getCurrent() {
+        return current;
+    }
+
+    public int getNext() {
+        return next;
+    }
+
+    public int getsIndex() {
+        return sIndex;
+    }
+
+    public int geteIndex() {
+        return eIndex;
+    }
+
+    public List<Article> getArticles() {
+        return articles;
     }
 
 }

@@ -51,7 +51,7 @@
 										<c:forEach items="${articles}" var="article">
 											<tr class="line">
 												<td><a href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
-												<td>${article.auth}</td>
+												<td>${article.author}</td>
 												<td>${article.category.name}</td>
 												<td>${article.status}</td>
 											</tr>

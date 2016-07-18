@@ -71,7 +71,7 @@ public class RepositoryService {
     }
 
     public Repository loadRepository() {
-        File dataFile = new File(configuration.getRepositoryDir(), "repository.data");
+        File dataFile = new File(configuration.getRepositoryDir(), "categorys.data");
         if (dataFile.exists()) {
             BufferedReader reader = null;
             try {
@@ -81,6 +81,7 @@ public class RepositoryService {
                 String temp = null;
                 while ((temp = reader.readLine()) != null) {
                     Category category = serializer.deserialize(temp.getBytes("utf-8"), Category.class);
+                    categoryService.loadCategory(category);
                     categorys.add(category);
                 }
 
@@ -88,6 +89,8 @@ public class RepositoryService {
 
                 Repository repository = new Repository();
                 refreshRepository(repository, categorys);
+
+                writeRepository(repository);
 
                 return repository;
             } catch (Exception e) {
@@ -109,7 +112,7 @@ public class RepositoryService {
     public void writeRepository(Repository repository) {
         BufferedOutputStream writer = null;
         try {
-            File dataFile = new File(configuration.getRepositoryDir(), "repository.data");
+            File dataFile = new File(configuration.getRepositoryDir(), "categorys.data");
             if (!dataFile.exists()) {
                 dataFile.getParentFile().mkdirs();
             }
@@ -118,6 +121,9 @@ public class RepositoryService {
             writer = new BufferedOutputStream(new FileOutputStream(dataFile));
             for (Category category : repository.categoryMap.values()) {
                 if (category.persistent) {
+                    //
+                    categoryService.writeCategory(category);
+
                     byte[] bytes = serializer.serialize(category);
                     writer.write(bytes);
                     writer.write('\r');
@@ -157,20 +163,20 @@ public class RepositoryService {
             categoryService.buildCategroy(category);
 
             // 将文章放入文章库
-            for (Article article : category.articleSet) {
-                repository.articleMap.put(article.id, article);
+            repository.articleMap.putAll(category.articleMap);
+        }
+
+        // 初始化全集
+        Category finCategory = new Category("artc_98", "全集", false);
+        for (Article article : repository.articleMap.values()) {
+            if ("全文完".equals(article.status)) {
+                finCategory.addArticle(article);
             }
         }
 
-        // 初始化全集和排行榜
-        Category finCategory = new Category("artc_98", "全集", false);
         Category topCategory = new Category("artc_99", "排行榜", false);
-        for (Article article : repository.articleMap.values()) {
-            topCategory.articleSet.add(article);
-            if ("全文完".equals(article.status)) {
-                finCategory.articleSet.add(article);
-            }
-        }
+        categoryService.buildTopCategroy(repository, topCategory);
+
         repository.categoryMap.put(finCategory.id, finCategory);
         repository.categoryMap.put(topCategory.id, topCategory);
     }

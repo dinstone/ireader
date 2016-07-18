@@ -103,7 +103,7 @@ public class ArticleController {
         }
 
         ModelAndView mav = new ModelAndView("read");
-        mav.addObject("categorys", repository.categoryMap);
+        mav.addObject("categorys", repository.categoryMap.values());
         mav.addObject("article", article);
 
         if (partIndex <= 0) {
@@ -126,7 +126,7 @@ public class ArticleController {
             StringBuilder content = new StringBuilder();
 
             Part part = parts[partIndex - 1];
-            File partFile = new File(article.file.getParentFile(), part.index + ".txt");
+            File partFile = articleService.getPartFile(article, part);
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(partFile), "utf-8"));

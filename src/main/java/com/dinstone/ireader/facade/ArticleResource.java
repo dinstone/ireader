@@ -133,7 +133,7 @@ public class ArticleResource {
         StringBuilder content = new StringBuilder();
         BufferedReader reader = null;
         try {
-            File partFile = new File(article.file.getParentFile(), part.index + ".txt");
+            File partFile = articleService.getPartFile(article, part);
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(partFile), "utf-8"));
             String temp = null;
             while ((temp = reader.readLine()) != null) {

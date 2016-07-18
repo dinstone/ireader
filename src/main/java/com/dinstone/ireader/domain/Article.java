@@ -30,6 +30,7 @@ public class Article implements Serializable, Comparable<Article> {
 
     public int read;
 
+    @JsonIgnore
     public Part[] parts;
 
     @JsonIgnore
@@ -56,7 +57,7 @@ public class Article implements Serializable, Comparable<Article> {
         return name;
     }
 
-    public String getAuth() {
+    public String getAuthor() {
         return author;
     }
 
@@ -66,14 +67,6 @@ public class Article implements Serializable, Comparable<Article> {
 
     public String getStatus() {
         return status;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public Date getUpdate() {
-        return update;
     }
 
     public Part[] getParts() {

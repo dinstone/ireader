@@ -50,7 +50,7 @@
 										<c:forEach items="${articles}" var="article">
 											<tr class="line">
 												<td><a href="${contextPath}/view/article/directory/${article.id}">${article.name}</a></td>
-												<td>${article.auth}</td>
+												<td>${article.author}</td>
 												<td>${article.status}</td>
 											</tr>
 										</c:forEach>
@@ -60,17 +60,17 @@
 									<div class="col-md-12 center-block">
 										<div class="dataTables_paginate paging_bootstrap pagination">
 											<ul class="pagination">
-												<c:if test="${!empty pagenation.prev}">
+												<c:if test="${pagenation.prev > 0}">
 													<li class="prev"><a href="${contextPath}/view/article/category/${category.id}-${pagenation.prev}">［上一页］</a></li>
 												</c:if>
-												<c:if test="${empty pagenation.prev}">
+												<c:if test="${pagenation.prev == 0}">
 													<li class="prev disabled"><a href="#">［上一页］</a></li>
 												</c:if>
 												<li class="active"><a href="#">第${pagenation.current}/${pagenation.total}页</a></li>
-												<c:if test="${!empty pagenation.next}">
+												<c:if test="${pagenation.next > 0}">
 													<li class="next"><a href="${contextPath}/view/article/category/${category.id}-${pagenation.next}">［下一页］</a></li>
 												</c:if>
-												<c:if test="${empty pagenation.next}">
+												<c:if test="${pagenation.next == 0}">
 													<li class="next disabled"><a href="#">［下一页］</a></li>
 												</c:if>
 											</ul>

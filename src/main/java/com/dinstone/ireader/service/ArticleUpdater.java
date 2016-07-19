@@ -84,11 +84,11 @@ public class ArticleUpdater implements Callable<Article> {
 
                     LOG.info("同步文章[{}]第{}/{}节", article.name, part.index, length);
 
-                    String[] contents = extractContents(article, part);
+                    String content = extractContent(article, part);
 
-                    writer.write(contents[0]);
+                    writer.write("第" + part.index + "节");
                     writer.newLine();
-                    writer.write(contents[1]);
+                    writer.write(content);
                     writer.newLine();
                     writer.flush();
                 }
@@ -155,8 +155,8 @@ public class ArticleUpdater implements Callable<Article> {
         }
     }
 
-    private String[] extractContents(Article article, Part part) throws Exception {
-        String[] contents = new String[2];
+    private String extractContent(Article article, Part part) throws Exception {
+        String content = null;
 
         int tryCount = 1;
         while (true) {
@@ -169,8 +169,7 @@ public class ArticleUpdater implements Callable<Article> {
                     builder.append(div.html().replace("<br>", "\r\n"));
                 }
 
-                contents[0] = doc.title();
-                contents[1] = builder.toString();
+                content = builder.toString();
 
                 break;
             } catch (Exception e) {
@@ -185,7 +184,7 @@ public class ArticleUpdater implements Callable<Article> {
         try {
             File partFile = new File(article.file.getParentFile(), part.index + ".txt");
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(partFile), "utf-8"));
-            writer.write(contents[1]);
+            writer.write(content);
             writer.flush();
         } catch (Exception e) {
         } finally {
@@ -197,7 +196,7 @@ public class ArticleUpdater implements Callable<Article> {
             }
         }
 
-        return contents;
+        return content;
     }
 
 }

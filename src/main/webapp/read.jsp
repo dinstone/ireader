@@ -49,7 +49,7 @@
 									</thead>
 									<tbody>
 										<tr class="line">
-											<td colspan="4"><p style="font-size: 24px;">${content}</p></td>
+											<td colspan="4"><p style="font-size: 24px; color: cadetblue;">${content}</p></td>
 										</tr>
 									</tbody>
 								</table>

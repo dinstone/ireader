@@ -6,7 +6,7 @@
 	</property>
 	<property>
 		<name>top.max.page.number</name>
-		<value>10</value>
+		<value>20</value>
 	</property>
 	<property>
 		<name>repository.dir</name>

@@ -132,4 +132,6 @@ function docReady() {
 		e.preventDefault();
 		$('#myModal').modal('show');
 	});
+	
+	autosize(document.querySelectorAll('textarea'));
 }

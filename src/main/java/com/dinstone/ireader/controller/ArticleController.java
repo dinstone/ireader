@@ -132,8 +132,11 @@ public class ArticleController {
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(partFile), "utf-8"));
                 String temp = null;
                 while ((temp = reader.readLine()) != null) {
-                    content.append(temp);
-                    content.append("<br>");
+                    if (temp.length() > 0) {
+                        content.append(temp);
+                    } else {
+                        content.append("\r\n");
+                    }
                 }
             } catch (Exception e) {
             } finally {

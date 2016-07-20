@@ -17,6 +17,7 @@
 <script src="${contextPath}/js/jquery.cookie.js"></script>
 <script src="${contextPath}/js/jquery.history.js"></script>
 <script src="${contextPath}/js/charisma.js"></script>
+<script src="${contextPath}/js/autosize.min.js"></script>
 </head>
 <body>
 	<jsp:include page="topbar.jsp"></jsp:include>
@@ -49,7 +50,7 @@
 									</thead>
 									<tbody>
 										<tr class="line">
-											<td colspan="4"><p style="font-size: 24px; color: cadetblue;">${content}</p></td>
+											<td colspan="4"><textarea style="font-size: 24px; color: cadetblue;" readonly="readonly">${content}</textarea></td>
 										</tr>
 									</tbody>
 								</table>

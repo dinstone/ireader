@@ -138,6 +138,7 @@ public class ArticleResource {
             String temp = null;
             while ((temp = reader.readLine()) != null) {
                 content.append(temp);
+                content.append("\r\n");
             }
         } catch (Exception e) {
         } finally {

@@ -56,10 +56,12 @@ public class ArticleUpdater implements Callable<Article> {
     public void update() {
         article.proccess = true;
         try {
-            if (article.parts == null) {
-                article.parts = articleService.extractDirectory(article);
-                articleService.writeDirectory(article);
-            }
+            LOG.info("更新文章[{}]目录开始: {}", article.name, article.href);
+
+            article.parts = articleService.extractDirectory(article);
+            articleService.writeDirectory(article);
+
+            LOG.info("更新文章[{}]目录完成: {}", article.name, article.href);
         } catch (Exception e) {
             LOG.error("更新文章[{}]目录失败:{} ", article.name, e.getMessage());
             return;

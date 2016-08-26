@@ -19,6 +19,23 @@
 		<constructor-arg value="ireader-config.xml" />
 	</bean>
 
+	<bean id="appVersion" class="com.dinstone.ireader.domain.AppVersion">
+		<property name="version" value="1.0" />
+		<property name="description" value="first release version" />
+		<property name="url" value="http://xxxx.com/app/download" />
+		<property name="sign" value="md5sign" />
+		<property name="patches">
+			<list>
+				<bean class="com.dinstone.ireader.domain.AppPatch">
+					<property name="version" value="1" />
+					<property name="description" value="fix some bugs" />
+					<property name="url" value="http://xxxx.com/app/download/" />
+					<property name="sign" value="md5sign" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
 	<task:scheduled-tasks>
 		<task:scheduled ref="repositorySyncTask" method="execute" cron="0 18 12 * * *" />
 	</task:scheduled-tasks>

@@ -41,10 +41,10 @@ public class Pagenation implements Serializable {
             total++;
         }
         // 初始化当前页数
-        if (pageNumber > total) {
-            pageNumber = total;
-        } else if (pageNumber <= 0) {
+        if (pageNumber <= 0) {
             pageNumber = 1;
+        } else if (pageNumber > total && total > 0) {
+            pageNumber = total;
         }
         current = pageNumber;
         // 初始化前一页后一页

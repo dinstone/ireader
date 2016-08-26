@@ -16,8 +16,8 @@
 <script src="${contextPath}/bcs/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="${contextPath}/js/jquery.cookie.js"></script>
 <script src="${contextPath}/js/jquery.history.js"></script>
-<script src="${contextPath}/js/charisma.js"></script>
 <script src="${contextPath}/js/autosize.min.js"></script>
+<script src="${contextPath}/js/charisma.js?ctx=${contextPath}"></script>
 </head>
 <body>
 	<jsp:include page="topbar.jsp"></jsp:include>

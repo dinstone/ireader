@@ -1,5 +1,9 @@
 $(document).ready(
 		function() {
+			var scripts = document.scripts;
+			var url = scripts[scripts.length - 1].src;
+			var ctx = new URL(url).param('ctx') || '';
+
 			// themes, change CSS with JS
 			// default theme(CSS) is cerulean, change it if needed
 			var defaultTheme = 'cerulean';
@@ -40,9 +44,9 @@ $(document).ready(
 
 			function switchTheme(themeName) {
 				if (themeName == 'classic') {
-					$('#bs-css').attr('href', '/ireader/bcs/bootstrap/dist/css/bootstrap.min.css');
+					$('#bs-css').attr('href', ctx + '/bcs/bootstrap/dist/css/bootstrap.min.css');
 				} else {
-					$('#bs-css').attr('href', '/ireader/css/bootstrap-' + themeName + '.min.css');
+					$('#bs-css').attr('href', ctx + '/css/bootstrap-' + themeName + '.min.css');
 				}
 
 				$('#themes i').removeClass('glyphicon glyphicon-ok whitespace').addClass('whitespace');
@@ -132,6 +136,19 @@ function docReady() {
 		e.preventDefault();
 		$('#myModal').modal('show');
 	});
-	
+
 	autosize(document.querySelectorAll('textarea'));
+}
+
+function URL(url) {
+	this.url = url;
+	this.param = function(key) {
+		var reg = new RegExp("(\\?|&)" + key + "=([^&]*)(&|$)");
+		var r = url.substr(1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	};
+
+	return this;
 }

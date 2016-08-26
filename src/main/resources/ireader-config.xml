@@ -2,11 +2,11 @@
 <configuration>
 	<property>
 		<name>max.page.number</name>
-		<value>4</value>
+		<value>400</value>
 	</property>
 	<property>
 		<name>top.max.page.number</name>
-		<value>2</value>
+		<value>20</value>
 	</property>
 	<property>
 		<name>repository.dir</name>

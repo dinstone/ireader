@@ -36,7 +36,7 @@ public class ArticleService {
     private JacksonSerializer serializer = new JacksonSerializer();
 
     @Resource
-    private Configuration configuration;
+    private Configuration configuration = new Configuration();
 
     @Resource
     private AsyncService asyncService;

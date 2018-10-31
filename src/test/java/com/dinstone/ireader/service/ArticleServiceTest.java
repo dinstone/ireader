@@ -20,7 +20,7 @@ public class ArticleServiceTest {
 
 	public static void main(String[] args) {
 		try {
-			extractDirectory(2503);
+			extractDirectory(2617);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -20,7 +20,7 @@ public class ArticleServiceTest {
 
 	public static void main(String[] args) {
 		try {
-			extractDirectory(2617);
+			extractDirectory(2669);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -45,7 +45,7 @@ public class ArticleServiceTest {
 			BufferedWriter writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(articleFile, true), "utf-8"));
 			for (Part part : article.parts) {
-				if (part.getIndex() > start) {
+				if (part.getIndex() >= start) {
 					System.out.println(part.getIndex() + " : " + part.getUrl());
 					String content = extractContent(article, part);
 					writer.write("第" + part.index + "节");
@@ -85,21 +85,21 @@ public class ArticleServiceTest {
 			}
 		}
 
-		BufferedWriter writer = null;
-		try {
-			File partFile = new File(article.file.getParentFile(), part.index + ".txt");
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(partFile), "utf-8"));
-			writer.write(content);
-			writer.flush();
-		} catch (Exception e) {
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-				}
-			}
-		}
+//		BufferedWriter writer = null;
+//		try {
+//			File partFile = new File(article.file.getParentFile(), part.index + ".txt");
+//			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(partFile), "utf-8"));
+//			writer.write(content);
+//			writer.flush();
+//		} catch (Exception e) {
+//		} finally {
+//			if (writer != null) {
+//				try {
+//					writer.close();
+//				} catch (IOException e) {
+//				}
+//			}
+//		}
 
 		return content;
 	}

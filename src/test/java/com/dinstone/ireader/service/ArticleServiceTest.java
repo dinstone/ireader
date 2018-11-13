@@ -3,7 +3,6 @@ package com.dinstone.ireader.service;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import org.jsoup.Jsoup;
@@ -20,7 +19,7 @@ public class ArticleServiceTest {
 
 	public static void main(String[] args) {
 		try {
-			extractDirectory(2669);
+			extractDirectory(2688);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

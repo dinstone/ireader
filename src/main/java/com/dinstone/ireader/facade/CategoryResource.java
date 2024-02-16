@@ -8,30 +8,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
 import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.service.RepositoryManager;
 
-@Service
-@Path("/category")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/category")
 public class CategoryResource {
 
-    @Resource
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    @GET
-    @Path("/list")
+    @GetMapping("/list")
     public List<Map<String, String>> list() {
         List<Map<String, String>> clist = new ArrayList<Map<String, String>>();
         Collection<Category> categorys = repositoryManager.getRepository().categoryMap.values();
@@ -47,10 +42,9 @@ public class CategoryResource {
         return clist;
     }
 
-    @GET
-    @Path("/{categoryId}/{pageNumber}")
-    public Map<String, Object> categoryPage(@PathParam("categoryId") String categoryId,
-            @PathParam("pageNumber") int pageNumber) {
+    @GetMapping("/{categoryId}/{pageNumber}")
+    public Map<String, Object> categoryPage(@PathVariable("categoryId") String categoryId,
+            @PathVariable("pageNumber") int pageNumber) {
         Map<String, Object> result = new HashMap<String, Object>();
 
         Map<String, Category> categorys = repositoryManager.getRepository().categoryMap;

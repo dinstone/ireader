@@ -12,15 +12,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Part;
@@ -28,20 +25,18 @@ import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.ArticleService;
 import com.dinstone.ireader.service.RepositoryManager;
 
-@Service
-@Path("/article")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/article")
 public class ArticleResource {
 
-    @Resource
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    @Resource
+    @Autowired
     private ArticleService articleService;
 
-    @GET
-    @Path("/query")
-    public List<Map<String, String>> query(@QueryParam("kw") String keyword) {
+    @GetMapping("/query")
+    public List<Map<String, String>> query(@RequestParam("kw") String keyword) {
         Repository repository = repositoryManager.getRepository();
         Collection<Article> articles = repository.articleMap.values();
 
@@ -61,9 +56,8 @@ public class ArticleResource {
         return aml;
     }
 
-    @GET
-    @Path("/directory/{articleId}")
-    public Map<String, Object> directory(@PathParam("articleId") String articleId) {
+    @GetMapping("/directory/{articleId}")
+    public Map<String, Object> directory(@PathVariable("articleId") String articleId) {
         Repository repository = repositoryManager.getRepository();
         Article article = articleService.findAticle(repository, articleId);
         if (article == null) {
@@ -89,9 +83,8 @@ public class ArticleResource {
         return am;
     }
 
-    @GET
-    @Path("/content/{articleId}/{partIndex}")
-    public Map<String, Object> content(@PathParam("articleId") String articleId, @PathParam("partIndex") int partIndex) {
+    @GetMapping("/content/{articleId}/{partIndex}")
+    public Map<String, Object> content(@PathVariable("articleId") String articleId, @PathVariable("partIndex") int partIndex) {
         Repository repository = repositoryManager.getRepository();
         Article article = articleService.findAticle(repository, articleId);
         if (article == null) {

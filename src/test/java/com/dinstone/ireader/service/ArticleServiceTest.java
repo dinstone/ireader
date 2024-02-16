@@ -28,9 +28,9 @@ public class ArticleServiceTest {
 	public static void extractDirectory(int start) throws Exception {
 		ArticleService as = new ArticleService();
 		Article article = new Article();
-		article.href = "http://www.yi-see.com/art_20134_9599.html";
+		article.href = "https://yiduzkk.com/art_20134_9599.html";
 		article.category = new Category();
-		article.category.href = "http://www.yi-see.com/artc_1.html";
+		article.category.href = "https://yiduzkk.com/artc_1.html";
 		article.parts = as.extractDirectory(article);
 		article.file = new File(new Configuration().getRepositoryDir() + "/20134/all.txt");
 		File parentFile = article.file.getParentFile();

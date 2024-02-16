@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dinstone.ireader.service.RepositoryManager;
 
 @Service
-@RequestMapping(value = "/repository")
+@RequestMapping(value = "/view/repository")
 public class RepositoryController {
 
     @Resource

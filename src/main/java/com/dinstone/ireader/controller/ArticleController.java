@@ -18,6 +18,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,14 +34,14 @@ import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.ArticleService;
 import com.dinstone.ireader.service.RepositoryManager;
 
-@Service
-@RequestMapping(value = "/article")
+@Controller
+@RequestMapping(value = "/view/article")
 public class ArticleController {
 
-    @Resource
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    @Resource
+    @Autowired
     private ArticleService articleService;
 
     @RequestMapping(value = "/list/{pageNumber}")

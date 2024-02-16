@@ -29,24 +29,30 @@ public class Configuration {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
-    /** Prefix for system property placeholders: "${" */
+    /**
+     * Prefix for system property placeholders: "${"
+     */
     private static final String PLACEHOLDER_PREFIX = "${";
 
-    /** Suffix for system property placeholders: "}" */
+    /**
+     * Suffix for system property placeholders: "}"
+     */
     private static final String PLACEHOLDER_SUFFIX = "}";
 
     private static final String defaultUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.154 Safari/537.36";
 
+    private static final String defaultRootPath = "https://yiduzkk.com";
+
     protected final Properties properties = new Properties();
 
     /**
-     * 
+     *
      */
     public Configuration() {
     }
 
     /**
-     * 
+     *
      */
     public Configuration(String configLocation) {
         if (configLocation == null) {
@@ -69,7 +75,7 @@ public class Configuration {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             Element conf = doc.createElement("configuration");
             doc.appendChild(conf);
-            for (Enumeration<?> e = properties.keys(); e.hasMoreElements();) {
+            for (Enumeration<?> e = properties.keys(); e.hasMoreElements(); ) {
                 String name = (String) e.nextElement();
                 Object object = properties.get(name);
                 String value = null;
@@ -211,9 +217,8 @@ public class Configuration {
 
     /**
      * Resolve ${...} placeholders in the given text, replacing them with corresponding system property values.
-     * 
-     * @param text
-     *        the String to resolve
+     *
+     * @param text the String to resolve
      * @return the resolved String
      * @see #PLACEHOLDER_PREFIX
      * @see #PLACEHOLDER_SUFFIX
@@ -255,7 +260,7 @@ public class Configuration {
 
     /**
      * Get the value of the <code>name</code> property, <code>null</code> if no such property exists.
-     * 
+     *
      * @param name
      * @return
      */
@@ -265,7 +270,7 @@ public class Configuration {
 
     /**
      * Get the value of the <code>name</code> property, <code>defaultValue</code> if no such property exists.
-     * 
+     *
      * @param name
      * @param defaultValue
      * @return
@@ -277,11 +282,9 @@ public class Configuration {
 
     /**
      * Set the <code>value</code> of the <code>name</code> property.
-     * 
-     * @param name
-     *        property name.
-     * @param value
-     *        property value.
+     *
+     * @param name  property name.
+     * @param value property value.
      */
     public void set(String name, String value) {
         properties.setProperty(name, value);
@@ -290,7 +293,7 @@ public class Configuration {
     /**
      * Get the value of the <code>name</code> property as an <code>int</code>. If no such property exists, or if the
      * specified value is not a valid <code>int</code>, then <code>defaultValue</code> is returned.
-     * 
+     *
      * @param name
      * @param defaultValue
      * @return
@@ -313,11 +316,9 @@ public class Configuration {
 
     /**
      * Set the value of the <code>name</code> property to an <code>int</code>.
-     * 
-     * @param name
-     *        property name.
-     * @param value
-     *        <code>int</code> value of the property.
+     *
+     * @param name  property name.
+     * @param value <code>int</code> value of the property.
      */
     public void setInt(String name, int value) {
         set(name, Integer.toString(value));
@@ -326,11 +327,9 @@ public class Configuration {
     /**
      * Get the value of the <code>name</code> property as a <code>long</code>. If no such property is specified, or if
      * the specified value is not a valid <code>long</code>, then <code>defaultValue</code> is returned.
-     * 
-     * @param name
-     *        property name.
-     * @param defaultValue
-     *        default value.
+     *
+     * @param name         property name.
+     * @param defaultValue default value.
      * @return property value as a <code>long</code>, or <code>defaultValue</code>.
      */
     public long getLong(String name, long defaultValue) {
@@ -351,11 +350,9 @@ public class Configuration {
 
     /**
      * Set the value of the <code>name</code> property to a <code>long</code>.
-     * 
-     * @param name
-     *        property name.
-     * @param value
-     *        <code>long</code> value of the property.
+     *
+     * @param name  property name.
+     * @param value <code>long</code> value of the property.
      */
     public void setLong(String name, long value) {
         set(name, Long.toString(value));
@@ -382,11 +379,9 @@ public class Configuration {
     /**
      * Get the value of the <code>name</code> property as a <code>float</code>. If no such property is specified, or if
      * the specified value is not a valid <code>float</code>, then <code>defaultValue</code> is returned.
-     * 
-     * @param name
-     *        property name.
-     * @param defaultValue
-     *        default value.
+     *
+     * @param name         property name.
+     * @param defaultValue default value.
      * @return property value as a <code>float</code>, or <code>defaultValue</code>.
      */
     public float getFloat(String name, float defaultValue) {
@@ -403,11 +398,9 @@ public class Configuration {
 
     /**
      * Set the value of the <code>name</code> property to a <code>float</code>.
-     * 
-     * @param name
-     *        property name.
-     * @param value
-     *        property value.
+     *
+     * @param name  property name.
+     * @param value property value.
      */
     public void setFloat(String name, float value) {
         set(name, Float.toString(value));
@@ -416,11 +409,9 @@ public class Configuration {
     /**
      * Get the value of the <code>name</code> property as a <code>boolean</code> . If no such property is specified, or
      * if the specified value is not a valid <code>boolean</code>, then <code>defaultValue</code> is returned.
-     * 
-     * @param name
-     *        property name.
-     * @param defaultValue
-     *        default value.
+     *
+     * @param name         property name.
+     * @param defaultValue default value.
      * @return property value as a <code>boolean</code>, or <code>defaultValue</code>.
      */
     public boolean getBoolean(String name, boolean defaultValue) {
@@ -454,4 +445,7 @@ public class Configuration {
         return getInt("article.update.interval", 24 * 60 * 60);
     }
 
+    public String getRootPath() {
+        return get("resource.root.path", defaultRootPath);
+    }
 }

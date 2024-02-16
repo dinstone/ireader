@@ -11,14 +11,13 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dinstone.ireader.Configuration;
@@ -33,15 +32,15 @@ public class CategoryService {
 
     private JacksonSerializer serializer = new JacksonSerializer();
 
-    @Resource
+    @Autowired
     private Configuration configuration;
 
-    @Resource
+    @Autowired
     private AsyncService asyncService;
 
-    public List<Category> extractCategorys() throws Exception {
+    public List<Category> extractCategories() throws Exception {
         List<Category> categories = new LinkedList<Category>();
-        String catalogUrl = "http://www.yi-see.com/";
+        String catalogUrl = configuration.getRootPath();
         int tryCount = 1;
         while (true) {
             try {
@@ -55,7 +54,7 @@ public class CategoryService {
                         Category cat = new Category();
                         cat.id = href.substring(1).replaceAll(".html", "");
                         cat.name = link.text();
-                        cat.href = link.attr("abs:href");
+                        cat.href = link.attr("href");
                         if (!"artc_0".equals(cat.id)) {
                             categories.add(cat);
                         }
@@ -75,11 +74,11 @@ public class CategoryService {
         return categories;
     }
 
-    public void buildTopCategroy(Repository repository, Category category) {
+    public void buildTopCategory(Repository repository, Category category) {
         long s = System.currentTimeMillis();
 
         int pageIndex = 1;
-        String next = "http://www.yi-see.com/weeksort_1.html";
+        String next = configuration.getRootPath() + "/weeksort_1.html";
         int maxPageNumber = configuration.getTopMaxPageNumber();
         while (next != null && pageIndex < maxPageNumber) {
             LOG.info("build category[{}] page[{}] from {} ", category.name, pageIndex, next);
@@ -144,7 +143,7 @@ public class CategoryService {
         }
     }
 
-    public void buildCategroy(Category category) {
+    public void buildCategory(Category category) {
         long s = System.currentTimeMillis();
 
         int pageIndex = 1;
@@ -154,7 +153,7 @@ public class CategoryService {
             LOG.info("build category[{}] page[{}] from {} ", category.name, pageIndex, next);
 
             try {
-                next = collectPagenationArticles(category, pageIndex, next);
+                next = collectPagingArticles(category, pageIndex, configuration.getRootPath() + "/" + next);
             } catch (Exception e) {
                 LOG.warn("build category[{}] page[{}] error", category.name, pageIndex);
                 break;
@@ -167,67 +166,59 @@ public class CategoryService {
         LOG.info("build category[{}] take {}s", category.name, (e - s) / 1000);
     }
 
-    private String collectPagenationArticles(Category category, int pageIndex, String access) throws Exception {
+    private String collectPagingArticles(Category category, int pageIndex, String access) throws Exception {
         int tryCount = 1;
         while (true) {
             try {
                 String userAgent = configuration.getUserAgent();
                 Document doc = Jsoup.connect(access).userAgent(userAgent).timeout(5000).get();
-                Elements tables = doc.select("table");
-                if (tables.size() >= 2) {
-                    Elements trs = tables.get(2).select("tbody tr");
-                    for (Element tr : trs) {
-                        Elements tds = tr.children();
-                        Element nameLink = tds.first().select("div.T2 a[href],div.T1 a[href]").first();
-                        if (nameLink != null) {
-                            String href = nameLink.attr("href");
-                            if (href.contains("art_")) {
-                                String articleId = href.replaceAll(".html", "");
-                                Article article = category.getArticle(articleId);
-                                if (article != null) {
-                                    article.category = category;
-
-                                    continue;
-                                }
-
-                                article = new Article();
-                                // base info
-                                article.id = articleId;
-                                article.name = nameLink.text();
-                                article.href = nameLink.attr("abs:href");
+                Elements rows = doc.select("div.b_row");
+                for (Element row : rows) {
+                    Element title = row.select("div.b_title a[href]").first();
+                    if (title != null) {
+                        String href = title.attr("href");
+                        if (href.contains("art_")) {
+                            String articleId = href.replaceAll(".html", "");
+                            Article article = category.getArticle(articleId);
+                            if (article != null) {
                                 article.category = category;
 
-                                // auth info
-                                Element authLink = tds.get(1).select("div.Auth a[href]").first();
-                                if (authLink != null) {
-                                    article.author = authLink.text();
-                                }
-
-                                // status info
-                                String status = tds.get(2).text();
-                                if (status != null && status.contains("全文完")) {
-                                    article.status = "全文完";
-                                } else {
-                                    article.status = "连载中";
-                                }
-
-                                category.addArticle(article);
+                                continue;
                             }
+
+                            article = new Article();
+                            // base info
+                            article.id = articleId;
+                            article.name = title.text();
+                            article.href = title.attr("href");
+                            article.category = category;
+
+                            // auth info
+                            Element authLink = row.select("div.b_auth a[href]").first();
+                            if (authLink != null) {
+                                article.author = authLink.text();
+                            }
+
+                            // status info
+                            Element status = row.select("div.b_staus").first();
+                            if (status != null && status.text().contains("连载")) {
+                                article.status = "连载";
+                            } else {
+                                article.status = "完本";
+                            }
+
+                            category.addArticle(article);
                         }
                     }
                 }
 
-                String next = null;
-                Elements nexts = doc.select("div.NEXT a[href]");
-                for (Element link : nexts) {
-                    String name = link.text();
-                    if (name.contains("下一页")) {
-                        next = link.attr("abs:href");
-                        break;
-                    }
+                // find next page url
+                Element ne = doc.select("div.n_goright a[href]").first();
+                if (ne != null) {
+                    return ne.attr("href");
                 }
 
-                return next;
+                return null;
             } catch (Exception e) {
                 tryCount++;
                 if (tryCount > 3) {

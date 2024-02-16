@@ -11,10 +11,9 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dinstone.ireader.Configuration;
@@ -29,13 +28,13 @@ public class RepositoryService {
 
     private JacksonSerializer serializer = new JacksonSerializer();
 
-    @Resource
+    @Autowired
     private Configuration configuration;
 
-    @Resource
+    @Autowired
     private CategoryService categoryService;
 
-    @Resource
+    @Autowired
     private AsyncService asyncService;
 
     public Repository createRepository() throws Exception {
@@ -43,7 +42,7 @@ public class RepositoryService {
         Repository repository = new Repository();
 
         // 抽取分类
-        List<Category> categories = categoryService.extractCategorys();
+        List<Category> categories = categoryService.extractCategories();
         // 刷新文章库
         refreshRepository(repository, categories);
 
@@ -58,7 +57,7 @@ public class RepositoryService {
         LOG.info("更新文章库开始");
 
         try {
-            List<Category> categories = categoryService.extractCategorys();
+            List<Category> categories = categoryService.extractCategories();
             refreshRepository(repository, categories);
 
             LOG.info("更新文章库完成");
@@ -71,7 +70,7 @@ public class RepositoryService {
     }
 
     public Repository loadRepository() {
-        File dataFile = new File(configuration.getRepositoryDir(), "categorys.data");
+        File dataFile = new File(configuration.getRepositoryDir(), "categories.data");
         if (dataFile.exists()) {
             BufferedReader reader = null;
             try {
@@ -112,7 +111,7 @@ public class RepositoryService {
     public void writeRepository(Repository repository) {
         BufferedOutputStream writer = null;
         try {
-            File dataFile = new File(configuration.getRepositoryDir(), "categorys.data");
+            File dataFile = new File(configuration.getRepositoryDir(), "categories.data");
             if (!dataFile.exists()) {
                 dataFile.getParentFile().mkdirs();
             }
@@ -147,38 +146,41 @@ public class RepositoryService {
 
     /**
      * 刷新文章库,从远程抓取最新文章到库中
-     * 
+     *
      * @param repository
      * @param categories
      */
     protected void refreshRepository(Repository repository, List<Category> categories) {
         for (Category category : categories) {
-            if (!repository.categoryMap.containsKey(category.id)) {
+            Category other = repository.categoryMap.get(category.id);
+            if (other == null) {
                 repository.categoryMap.put(category.id, category);
+            } else {
+                other.name = category.name;
+                other.href = category.href;
             }
         }
 
         // 构建分类中的文章
         for (Category category : repository.categoryMap.values()) {
-            categoryService.buildCategroy(category);
+            categoryService.buildCategory(category);
 
             // 将文章放入文章库
             repository.articleMap.putAll(category.articleMap);
         }
 
         // 初始化全集
-        Category finCategory = new Category("artc_98", "全集", false);
+        Category finCategory = new Category("artc_98", "完本", false);
         for (Article article : repository.articleMap.values()) {
-            if ("全文完".equals(article.status)) {
+            if ("完本".equals(article.status)) {
                 finCategory.addArticle(article);
             }
         }
-
-        Category topCategory = new Category("artc_99", "排行榜", false);
-        categoryService.buildTopCategroy(repository, topCategory);
-
         repository.categoryMap.put(finCategory.id, finCategory);
-        repository.categoryMap.put(topCategory.id, topCategory);
+
+//        Category topCategory = new Category("artc_99", "排行榜", false);
+//        categoryService.buildTopCategory(repository, topCategory);
+//        repository.categoryMap.put(topCategory.id, topCategory);
     }
 
 }

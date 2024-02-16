@@ -3,30 +3,24 @@ package com.dinstone.ireader.facade;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dinstone.ireader.domain.AppPatch;
 import com.dinstone.ireader.domain.AppVersion;
 
-@Service
-@Path("/app")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/app")
 public class AppResource {
 
-    @Resource
     private AppVersion appVersion;
 
-    @GET
-    @Path("/patch/{version}/{patch}")
-    public List<AppPatch> patch(@PathParam("version") String version, @PathParam("patch") String patch) {
+    @GetMapping("/patch/{version}/{patch}")
+    public List<AppPatch> patch(@PathVariable String version, @PathVariable String patch) {
         int pv = 0;
         if (patch != null) {
             try {
@@ -48,9 +42,8 @@ public class AppResource {
         return patchList;
     }
 
-    @GET
-    @Path("/check/{appVersion}")
-    public AppVersion check(@PathParam("appVersion") String version) {
+    @GetMapping("/check/{appVersion}")
+    public AppVersion check(@PathVariable("appVersion") String version) {
         if (version == null || version.isEmpty()) {
             return null;
         }

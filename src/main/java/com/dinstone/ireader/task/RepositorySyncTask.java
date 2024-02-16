@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dinstone.ireader.service.RepositoryManager;
@@ -16,7 +17,7 @@ public class RepositorySyncTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(RepositorySyncTask.class);
 
-    @Resource
+    @Autowired
     private RepositoryManager repositoryManager;
 
     public void execute() {

@@ -11,13 +11,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 分类
- * 
+ *
  * @author dinstone
  * @version 1.0.0
  */
 public class Category implements Comparable<Category>, Serializable {
 
-    /**  */
+    /**
+     *
+     */
     private static final long serialVersionUID = 1L;
 
     public String id;
@@ -73,7 +75,11 @@ public class Category implements Comparable<Category>, Serializable {
 
     @Override
     public String toString() {
-        return "Category [id=" + id + ", name=" + name + "]";
+        return "Category{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", href='" + href + '\'' +
+                '}';
     }
 
     @Override

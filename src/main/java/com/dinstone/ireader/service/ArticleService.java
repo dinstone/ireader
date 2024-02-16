@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,6 +20,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dinstone.ireader.Configuration;
@@ -35,10 +35,10 @@ public class ArticleService {
 
     private JacksonSerializer serializer = new JacksonSerializer();
 
-    @Resource
+    @Autowired
     private Configuration configuration = new Configuration();
 
-    @Resource
+    @Autowired
     private AsyncService asyncService;
 
     public Article findAticle(Repository repository, String articleId) {
@@ -148,7 +148,7 @@ public class ArticleService {
                 List<Part> parts = new LinkedList<Part>();
                 Elements links = doc.select("a[href]");
                 for (Element link : links) {
-                    String href = link.attr("abs:href");
+                    String href = link.attr("href");
                     if (href.contains("read_")) {
                         String name = link.text();
                         int index = parseIndex(name);

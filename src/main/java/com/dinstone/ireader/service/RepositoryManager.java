@@ -3,6 +3,7 @@ package com.dinstone.ireader.service;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dinstone.ireader.domain.Repository;
@@ -10,7 +11,7 @@ import com.dinstone.ireader.domain.Repository;
 @Service
 public class RepositoryManager {
 
-    @Resource
+    @Autowired
     private RepositoryService repositoryService;
 
     private Repository repository;

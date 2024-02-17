@@ -9,18 +9,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,14 +29,13 @@ import com.dinstone.ireader.domain.Pagenation;
 import com.dinstone.ireader.domain.Part;
 import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.ArticleService;
-import com.dinstone.ireader.service.RepositoryManager;
+import com.dinstone.ireader.service.RepositoryService;
 
 @Controller
 @RequestMapping(value = "/view/article")
 public class ArticleController {
-
     @Autowired
-    private RepositoryManager repositoryManager;
+    private RepositoryService repositoryService;
 
     @Autowired
     private ArticleService articleService;
@@ -53,25 +49,28 @@ public class ArticleController {
 
     @RequestMapping(value = "/query")
     public ModelAndView query(@RequestParam String word) {
-        Repository repository = repositoryManager.getRepository();
-        Collection<Article> articles = repository.articleMap.values();
+        Repository repository = repositoryService.getRepository();
+//        Collection<Article> articles = repository.articleMap.values();
+//
+//        LinkedList<Article> result = new LinkedList<Article>();
+//        for (Article article : articles) {
+//            if (article.name != null && article.name.contains(word)) {
+//                result.add(article);
+//            }
+//        }
 
-        LinkedList<Article> result = new LinkedList<Article>();
-        for (Article article : articles) {
-            if (article.name != null && article.name.contains(word)) {
-                result.add(article);
-            }
-        }
+        List<Article> result = repositoryService.queryRepository(word);
 
         ModelAndView mav = new ModelAndView("query");
         mav.addObject("categorys", repository.categoryMap.values());
         mav.addObject("articles", result);
+        mav.addObject("keyword", word);
         return mav;
     }
 
     @RequestMapping(value = "/category/{categoryId}-{pageNumber}")
     public ModelAndView category(@PathVariable String categoryId, @PathVariable int pageNumber) {
-        Map<String, Category> categorys = repositoryManager.getRepository().categoryMap;
+        Map<String, Category> categorys = repositoryService.getRepository().categoryMap;
         Category category = categorys.get(categoryId);
         if (category == null) {
             ModelAndView mav = new ModelAndView("error");
@@ -84,7 +83,7 @@ public class ArticleController {
 
     private ModelAndView create(Category category, int pageNumber, String viewName) {
         ModelAndView mav = new ModelAndView(viewName);
-        mav.addObject("categorys", repositoryManager.getRepository().categoryMap.values());
+        mav.addObject("categorys", repositoryService.getRepository().categoryMap.values());
         mav.addObject("category", category);
 
         Pagenation pagenation = category.getPageArticles(pageNumber);
@@ -96,13 +95,14 @@ public class ArticleController {
 
     @RequestMapping("/read/{articleId}-{partIndex}")
     public ModelAndView read(@PathVariable String articleId, @PathVariable int partIndex) throws Exception {
-        Repository repository = repositoryManager.getRepository();
-        Article article = articleService.findAticle(repository, articleId);
+        Repository repository = repositoryService.getRepository();
+        Article article = repository.articleMap.get(articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
-            mav.addObject("message", "文章正在更新请稍后再试.");
+            mav.addObject("message", "没有找到该文章，请稍后再试.");
             return mav;
         }
+        article = articleService.findArticleParts(article);
 
         ModelAndView mav = new ModelAndView("read");
         mav.addObject("categorys", repository.categoryMap.values());
@@ -160,16 +160,17 @@ public class ArticleController {
 
     @RequestMapping("/directory/{articleId}")
     public ModelAndView directory(@PathVariable String articleId) throws Exception {
-        Repository repository = repositoryManager.getRepository();
-        Article article = articleService.findAticle(repository, articleId);
+        Repository repository = repositoryService.getRepository();
+        Article article = repository.articleMap.get(articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
-            mav.addObject("message", "文章正在更新请稍后再试.");
+            mav.addObject("message", "没有找到该文章，请稍后再试.");
             return mav;
         }
+        article = articleService.findArticleParts(article);
 
         ModelAndView mav = new ModelAndView("directory");
-        mav.addObject("categorys", repositoryManager.getRepository().categoryMap.values());
+        mav.addObject("categorys", repositoryService.getRepository().categoryMap.values());
         mav.addObject("article", article);
 
         return mav;
@@ -178,13 +179,14 @@ public class ArticleController {
     @RequestMapping("/download/{articleId}")
     public ModelAndView download(@PathVariable String articleId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        Repository repository = repositoryManager.getRepository();
-        Article article = articleService.findAticle(repository, articleId);
+        Repository repository = repositoryService.getRepository();
+        Article article = repository.articleMap.get(articleId);
         if (article == null) {
             ModelAndView mav = new ModelAndView("error");
-            mav.addObject("message", "文章正在更新请稍后再试.");
+            mav.addObject("message", "没有找到该文章，请稍后再试.");
             return mav;
         }
+        article = articleService.findArticleParts(article);
 
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;

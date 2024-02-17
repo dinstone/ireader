@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Category;
 import com.dinstone.ireader.domain.Pagenation;
-import com.dinstone.ireader.service.RepositoryManager;
+import com.dinstone.ireader.service.RepositoryService;
 
 @RestController
 @RequestMapping("/category")
 public class CategoryResource {
 
     @Autowired
-    private RepositoryManager repositoryManager;
+    private RepositoryService repositoryService;
 
     @GetMapping("/list")
     public List<Map<String, String>> list() {
         List<Map<String, String>> clist = new ArrayList<Map<String, String>>();
-        Collection<Category> categorys = repositoryManager.getRepository().categoryMap.values();
+        Collection<Category> categorys = repositoryService.getRepository().categoryMap.values();
         if (categorys != null) {
             for (Category category : categorys) {
                 HashMap<String, String> cat = new HashMap<String, String>();
@@ -47,7 +47,7 @@ public class CategoryResource {
             @PathVariable("pageNumber") int pageNumber) {
         Map<String, Object> result = new HashMap<String, Object>();
 
-        Map<String, Category> categorys = repositoryManager.getRepository().categoryMap;
+        Map<String, Category> categorys = repositoryService.getRepository().categoryMap;
         Category category = categorys.get(categoryId);
         if (category == null) {
             return result;

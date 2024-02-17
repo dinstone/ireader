@@ -33,9 +33,8 @@ public class LuceneTest {
 
         //2、基于Directory对象创建一个IndexWriter对象
         IndexWriterConfig config = new IndexWriterConfig(new IKAnalyzer());
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         IndexWriter indexWriter = new IndexWriter(directory, config);
-
-        indexWriter.deleteAll();
 
         //3、读取磁盘上的文件，对应每个文件创建一个文档对象。
         //取文件名

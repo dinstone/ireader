@@ -18,26 +18,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.dinstone.ireader.domain.Article;
 import com.dinstone.ireader.domain.Part;
 import com.dinstone.ireader.domain.Repository;
 import com.dinstone.ireader.service.ArticleService;
-import com.dinstone.ireader.service.RepositoryManager;
+import com.dinstone.ireader.service.RepositoryService;
 
 @RestController
 @RequestMapping("/article")
 public class ArticleResource {
 
     @Autowired
-    private RepositoryManager repositoryManager;
+    private RepositoryService repositoryService;
 
     @Autowired
     private ArticleService articleService;
 
     @GetMapping("/query")
     public List<Map<String, String>> query(@RequestParam("kw") String keyword) {
-        Repository repository = repositoryManager.getRepository();
+        Repository repository = repositoryService.getRepository();
         Collection<Article> articles = repository.articleMap.values();
 
         List<Map<String, String>> aml = new LinkedList<Map<String, String>>();
@@ -58,11 +59,12 @@ public class ArticleResource {
 
     @GetMapping("/directory/{articleId}")
     public Map<String, Object> directory(@PathVariable("articleId") String articleId) {
-        Repository repository = repositoryManager.getRepository();
-        Article article = articleService.findAticle(repository, articleId);
+        Repository repository = repositoryService.getRepository();
+        Article article = repository.articleMap.get(articleId);
         if (article == null) {
             throw new IllegalStateException("文章正在更新，请稍后再试.");
         }
+        article = articleService.findArticleParts(article);
 
         Map<String, Object> am = new HashMap<String, Object>();
         am.put("id", article.id);
@@ -85,11 +87,12 @@ public class ArticleResource {
 
     @GetMapping("/content/{articleId}/{partIndex}")
     public Map<String, Object> content(@PathVariable("articleId") String articleId, @PathVariable("partIndex") int partIndex) {
-        Repository repository = repositoryManager.getRepository();
-        Article article = articleService.findAticle(repository, articleId);
+        Repository repository = repositoryService.getRepository();
+        Article article = repository.articleMap.get(articleId);
         if (article == null) {
             throw new IllegalStateException("文章正在更新，请稍后再试.");
         }
+        article = articleService.findArticleParts(article);
 
         if (partIndex <= 0) {
             partIndex = 1;

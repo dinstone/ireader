@@ -25,7 +25,7 @@
 		<ul class="collapse navbar-collapse nav navbar-nav top-menu">
 			<li>
 				<form class="navbar-search pull-left" action="${contextPath}/view/article/query">
-					<input placeholder="搜索" class="search-query form-control col-md-12" name="word" type="text">
+					<input placeholder="搜索" class="search-query form-control col-md-12" name="word" type="text" value="${keyword}">
 				</form>
 			</li>
 		</ul>

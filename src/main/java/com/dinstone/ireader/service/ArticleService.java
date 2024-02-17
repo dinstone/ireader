@@ -36,20 +36,15 @@ public class ArticleService {
     private JacksonSerializer serializer = new JacksonSerializer();
 
     @Autowired
-    private Configuration configuration = new Configuration();
+    private Configuration configuration;
 
     @Autowired
     private AsyncService asyncService;
 
-    public Article findAticle(Repository repository, String articleId) {
-        Article article = repository.articleMap.get(articleId);
-        if (article == null) {
-            return null;
-        }
-
+    public Article findArticleParts(Article article) {
         if (article.parts == null) {
             // load from local file system
-            article.parts = loadDerectory(article);
+            article.parts = loadDirectory(article);
             //
             if (article.parts == null) {
                 try {
@@ -103,7 +98,7 @@ public class ArticleService {
         }
     }
 
-    public Part[] loadDerectory(Article article) {
+    public Part[] loadDirectory(Article article) {
         File dataFile = new File(configuration.getRepositoryDir(), article.category.id + "/" + article.id
                 + "/parts.data");
         LOG.info("加载文章[{}]目录从本地文件系统开始：{}", article.name, dataFile);
@@ -136,7 +131,7 @@ public class ArticleService {
     }
 
     public Part[] extractDirectory(Article article) throws Exception {
-        String url = article.href;
+        String url = configuration.getRootPath() + "/" + article.href;
         int tryCount = 1;
         while (true) {
             try {
@@ -146,7 +141,7 @@ public class ArticleService {
 
                 // extract parts
                 List<Part> parts = new LinkedList<Part>();
-                Elements links = doc.select("a[href]");
+                Elements links = doc.select("td a[href]");
                 for (Element link : links) {
                     String href = link.attr("href");
                     if (href.contains("read_")) {
